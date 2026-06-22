@@ -215,10 +215,24 @@
   </main>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "";
+    const GOOGLE_SCRIPT_URL = "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
     const form = document.getElementById("screening-form");
     const answerInput = document.getElementById("sign-answer");
     const message = document.getElementById("form-message");
+
+    function getParticipantId() {
+      const existingId = sessionStorage.getItem("participant_id");
+      if (existingId) {
+        return existingId;
+      }
+
+      const newId = crypto.randomUUID
+        ? crypto.randomUUID()
+        : `participant-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+      sessionStorage.setItem("participant_id", newId);
+      return newId;
+    }
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -230,12 +244,13 @@
         return;
       }
 
-      if (!GOOGLE_SCRIPT_URL) {
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
         message.textContent = "Submission is not connected yet. Add the Google Apps Script URL first.";
         return;
       }
 
       const payload = new FormData();
+      payload.append("participant_id", getParticipantId());
       payload.append("language", "American Sign Language");
       payload.append("question", "What is this sign?");
       payload.append("video", "asl_hello.mp4");
