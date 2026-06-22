@@ -72,9 +72,18 @@
       text-shadow: 0 1px 0 #ffffff;
     }
 
+    .video-stage {
+      width: min(620px, 100%);
+      margin: 0 auto 28px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+
     .video-wrap {
       width: min(360px, 100%);
-      margin: 0 auto 28px;
+      margin: 0 auto;
       padding: 12px;
       border: 1px solid var(--line);
       border-radius: 14px;
@@ -88,6 +97,31 @@
       max-height: 380px;
       border-radius: 8px;
       background: #111111;
+    }
+
+    .next-video {
+      width: 70px;
+      min-height: 70px;
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--blue);
+      border-color: var(--blue);
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .next-video:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .video-count {
+      margin: -10px 0 22px;
+      color: #465266;
+      font-size: 16px;
+      font-weight: 800;
     }
 
     .answer-box {
@@ -187,6 +221,19 @@
         padding: 34px 18px 38px;
         border-radius: 34px;
       }
+
+      .video-stage {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .next-video {
+        width: min(220px, 100%);
+        min-height: 48px;
+        margin: 0 auto;
+        border-radius: 0;
+        font-size: 20px;
+      }
     }
   </style>
 </head>
@@ -195,12 +242,16 @@
     <h1>Screening</h1>
     <p class="instruction">American Sign Language</p>
 
-    <div class="video-wrap">
-      <video controls playsinline preload="metadata">
-        <source src="asl_hello.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
+    <div class="video-stage">
+      <div class="video-wrap">
+        <video id="screening-video" controls playsinline preload="metadata">
+          <source id="video-source" src="asl_hello.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <button class="next-video" id="next-video" type="button" aria-label="Show next video">›</button>
     </div>
+    <p class="video-count" id="video-count">Video 1 of 2</p>
 
     <form class="answer-box" id="screening-form">
       <label for="sign-answer">What is this sign?</label>
@@ -216,9 +267,19 @@
 
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDVZqyogK4lpCevhRALceTpyXuHDV6m3b1phyiRmlalIkYNv28wudxF6PMfZO03BHD/exec";
+    const videos = [
+      { file: "asl_hello.mp4", label: "Video 1" },
+      { file: "asl_goodbye.mp4", label: "Video 2" }
+    ];
+
     const form = document.getElementById("screening-form");
     const answerInput = document.getElementById("sign-answer");
     const message = document.getElementById("form-message");
+    const video = document.getElementById("screening-video");
+    const videoSource = document.getElementById("video-source");
+    const nextVideoButton = document.getElementById("next-video");
+    const videoCount = document.getElementById("video-count");
+    let currentVideoIndex = 0;
 
     function getParticipantId() {
       const existingId = sessionStorage.getItem("participant_id");
@@ -233,6 +294,31 @@
       sessionStorage.setItem("participant_id", newId);
       return newId;
     }
+
+    function showCurrentVideo() {
+      const currentVideo = videos[currentVideoIndex];
+      video.pause();
+      videoSource.src = currentVideo.file;
+      video.load();
+      videoCount.textContent = `Video ${currentVideoIndex + 1} of ${videos.length}`;
+      const isLastVideo = currentVideoIndex === videos.length - 1;
+      nextVideoButton.hidden = isLastVideo;
+      nextVideoButton.disabled = isLastVideo;
+      nextVideoButton.textContent = "›";
+      nextVideoButton.setAttribute("aria-label", "Show next video");
+      answerInput.value = "";
+      message.textContent = "";
+      answerInput.focus();
+    }
+
+    nextVideoButton.addEventListener("click", () => {
+      if (currentVideoIndex >= videos.length - 1) {
+        return;
+      }
+
+      currentVideoIndex += 1;
+      showCurrentVideo();
+    });
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -253,7 +339,7 @@
       payload.append("participant_id", getParticipantId());
       payload.append("language", "American Sign Language");
       payload.append("question", "What is this sign?");
-      payload.append("video", "asl_hello.mp4");
+      payload.append("video", videos[currentVideoIndex].file);
       payload.append("response", answer);
 
       message.textContent = "Submitting...";
@@ -270,6 +356,8 @@
         message.textContent = "Submission failed. Please try again.";
       }
     });
+
+    showCurrentVideo();
   </script>
 </body>
 </html>
