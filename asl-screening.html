@@ -133,7 +133,8 @@
       margin-top: 28px;
     }
 
-    .button {
+    .button,
+    button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -147,15 +148,34 @@
       text-decoration: none;
       box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12);
       transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      cursor: pointer;
     }
 
     .button:hover,
-    .button:focus {
+    .button:focus,
+    button:hover,
+    button:focus {
       outline: 3px solid rgba(15, 97, 185, 0.22);
       background: #edf6ff;
       color: var(--blue);
       transform: translateY(-1px);
       box-shadow: 0 8px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .submit-button {
+      width: min(220px, 100%);
+      margin: 6px auto 0;
+      background: var(--blue);
+      border-color: var(--blue);
+      color: var(--white);
+    }
+
+    .message {
+      min-height: 24px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 800;
     }
 
     @media (max-width: 720px) {
@@ -182,15 +202,59 @@
       </video>
     </div>
 
-    <form class="answer-box">
+    <form class="answer-box" id="screening-form">
       <label for="sign-answer">What is this sign?</label>
       <input id="sign-answer" name="sign-answer" type="text" autocomplete="off" placeholder="Enter the sign name here">
+      <button class="submit-button" type="submit">Submit</button>
+      <p class="message" id="form-message" aria-live="polite"></p>
     </form>
 
     <div class="actions">
       <a class="button" href="screening-language.html">Back to Language Selection</a>
-      <a class="button" href="index.html">Back to Home</a>
     </div>
   </main>
+
+  <script>
+    const GOOGLE_SCRIPT_URL = "";
+    const form = document.getElementById("screening-form");
+    const answerInput = document.getElementById("sign-answer");
+    const message = document.getElementById("form-message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const answer = answerInput.value.trim();
+      if (!answer) {
+        message.textContent = "Please enter your answer before submitting.";
+        answerInput.focus();
+        return;
+      }
+
+      if (!GOOGLE_SCRIPT_URL) {
+        message.textContent = "Submission is not connected yet. Add the Google Apps Script URL first.";
+        return;
+      }
+
+      const payload = new FormData();
+      payload.append("language", "American Sign Language");
+      payload.append("question", "What is this sign?");
+      payload.append("video", "asl_hello.mp4");
+      payload.append("response", answer);
+
+      message.textContent = "Submitting...";
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: payload
+        });
+        message.textContent = "Response submitted. Thank you.";
+        form.reset();
+      } catch (error) {
+        message.textContent = "Submission failed. Please try again.";
+      }
+    });
+  </script>
 </body>
 </html>
