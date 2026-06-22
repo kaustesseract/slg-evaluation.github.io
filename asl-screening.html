@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASL Screening</title>
+  <style>
+    :root {
+      --ink: #171717;
+      --muted: #3f4652;
+      --panel: #fff3bf;
+      --panel-deep: #ffe174;
+      --purple: #ff4cff;
+      --blue: #0f61b9;
+      --white: #ffffff;
+      --border: #d6b849;
+      --line: #d9dee7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(20, 20, 20, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 20, 20, 0.04) 1px, transparent 1px),
+        #ffffff;
+      background-size: 16px 16px;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    .screening-panel {
+      width: min(920px, 100%);
+      padding: 42px 32px 50px;
+      border: 1px solid var(--border);
+      border-radius: 72px;
+      background: linear-gradient(160deg, var(--panel), var(--panel-deep));
+      box-shadow: 0 20px 60px rgba(42, 84, 140, 0.14);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 28px;
+      color: var(--purple);
+      font-size: clamp(32px, 4.2vw, 48px);
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .instruction {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0 28px;
+      padding: 14px 24px;
+      border: 2px solid rgba(191, 92, 255, 0.45);
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ffffff 0%, #f5e8ff 45%, #eaf4ff 100%);
+      color: #8b16d8;
+      font-size: clamp(21px, 2.4vw, 28px);
+      font-weight: 900;
+      line-height: 1.25;
+      box-shadow: 0 12px 30px rgba(111, 63, 160, 0.18);
+      text-shadow: 0 1px 0 #ffffff;
+    }
+
+    .video-wrap {
+      width: min(360px, 100%);
+      margin: 0 auto 28px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: 0 16px 34px rgba(70, 55, 20, 0.16);
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      max-height: 380px;
+      border-radius: 8px;
+      background: #111111;
+    }
+
+    .answer-box {
+      width: min(560px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      display: inline-block;
+      padding: 10px 18px;
+      border: 2px solid #111111;
+      background: var(--white);
+      color: #000000;
+      font-size: clamp(22px, 2.3vw, 28px);
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    input {
+      width: 100%;
+      min-height: 54px;
+      padding: 12px 16px;
+      border: 2px solid #111111;
+      border-radius: 6px;
+      background: var(--white);
+      color: #111111;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    input:focus {
+      outline: 3px solid rgba(15, 97, 185, 0.24);
+      border-color: var(--blue);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 2px solid #111111;
+      background: var(--white);
+      color: #000000;
+      font-size: 18px;
+      font-weight: 900;
+      text-decoration: none;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .button:hover,
+    .button:focus {
+      outline: 3px solid rgba(15, 97, 185, 0.22);
+      background: #edf6ff;
+      color: var(--blue);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 16px;
+      }
+
+      .screening-panel {
+        padding: 34px 18px 38px;
+        border-radius: 34px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="screening-panel">
+    <h1>Screening</h1>
+    <p class="instruction">American Sign Language</p>
+
+    <div class="video-wrap">
+      <video controls playsinline preload="metadata">
+        <source src="asl_hello.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <form class="answer-box">
+      <label for="sign-answer">What is this sign?</label>
+      <input id="sign-answer" name="sign-answer" type="text" autocomplete="off" placeholder="Enter the sign name here">
+    </form>
+
+    <div class="actions">
+      <a class="button" href="screening-language.html">Back to Language Selection</a>
+      <a class="button" href="index.html">Back to Home</a>
+    </div>
+  </main>
+</body>
+</html>
