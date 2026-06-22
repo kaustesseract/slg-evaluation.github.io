@@ -75,10 +75,6 @@
     .video-stage {
       width: min(620px, 100%);
       margin: 0 auto 28px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 18px;
-      align-items: center;
     }
 
     .video-wrap {
@@ -97,24 +93,6 @@
       max-height: 380px;
       border-radius: 8px;
       background: #111111;
-    }
-
-    .next-video {
-      width: 70px;
-      min-height: 70px;
-      border-radius: 999px;
-      background: #ffffff;
-      color: var(--blue);
-      border-color: var(--blue);
-      font-size: 34px;
-      line-height: 1;
-    }
-
-    .next-video:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12);
     }
 
     .video-count {
@@ -222,18 +200,6 @@
         border-radius: 34px;
       }
 
-      .video-stage {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-
-      .next-video {
-        width: min(220px, 100%);
-        min-height: 48px;
-        margin: 0 auto;
-        border-radius: 0;
-        font-size: 20px;
-      }
     }
   </style>
 </head>
@@ -249,7 +215,6 @@
           Your browser does not support the video tag.
         </video>
       </div>
-      <button class="next-video" id="next-video" type="button" aria-label="Show next video">›</button>
     </div>
     <p class="video-count" id="video-count">Video 1 of 2</p>
 
@@ -277,7 +242,6 @@
     const message = document.getElementById("form-message");
     const video = document.getElementById("screening-video");
     const videoSource = document.getElementById("video-source");
-    const nextVideoButton = document.getElementById("next-video");
     const videoCount = document.getElementById("video-count");
     let currentVideoIndex = 0;
 
@@ -301,24 +265,10 @@
       videoSource.src = currentVideo.file;
       video.load();
       videoCount.textContent = `Video ${currentVideoIndex + 1} of ${videos.length}`;
-      const isLastVideo = currentVideoIndex === videos.length - 1;
-      nextVideoButton.hidden = isLastVideo;
-      nextVideoButton.disabled = isLastVideo;
-      nextVideoButton.textContent = "›";
-      nextVideoButton.setAttribute("aria-label", "Show next video");
       answerInput.value = "";
       message.textContent = "";
       answerInput.focus();
     }
-
-    nextVideoButton.addEventListener("click", () => {
-      if (currentVideoIndex >= videos.length - 1) {
-        return;
-      }
-
-      currentVideoIndex += 1;
-      showCurrentVideo();
-    });
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -350,8 +300,14 @@
           mode: "no-cors",
           body: payload
         });
-        message.textContent = "Response submitted. Thank you.";
-        form.reset();
+        if (currentVideoIndex < videos.length - 1) {
+          currentVideoIndex += 1;
+          showCurrentVideo();
+          message.textContent = "Response submitted. Please answer the next video.";
+        } else {
+          message.textContent = "All screening responses submitted. Thank you.";
+          form.reset();
+        }
       } catch (error) {
         message.textContent = "Submission failed. Please try again.";
       }
