@@ -1,10 +1,481 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Website</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automated Sign Language Generator Evaluation</title>
+  <style>
+    :root {
+      --blue: #1582f3;
+      --blue-dark: #0f5fb4;
+      --ink: #171717;
+      --muted: #5b6573;
+      --panel: #fff3bf;
+      --panel-deep: #ffe174;
+      --purple: #bf5cff;
+      --line: #d9dee7;
+      --white: #ffffff;
+      --soft: #f7f9fc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(20, 20, 20, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 20, 20, 0.04) 1px, transparent 1px),
+        #ffffff;
+      background-size: 16px 16px;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 32px auto;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 520px;
+      padding: 42px 32px 48px;
+      border: 1px solid #d6b849;
+      border-radius: 72px;
+      background: linear-gradient(160deg, var(--panel), var(--panel-deep));
+      box-shadow: 0 20px 60px rgba(42, 84, 140, 0.14);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      background: var(--blue);
+      opacity: 0.95;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 46%;
+      height: 12px;
+      left: 0;
+      top: 150px;
+      transform: translateX(-28%);
+    }
+
+    .hero::after {
+      width: 44%;
+      height: 12px;
+      right: 0;
+      bottom: 112px;
+      transform: translateX(28%);
+    }
+
+    .corner-line {
+      position: absolute;
+      top: 0;
+      right: 10%;
+      width: 260px;
+      height: 185px;
+      border-right: 12px solid var(--blue);
+      border-bottom: 12px solid var(--blue);
+      pointer-events: none;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 44px;
+      text-align: center;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.15;
+      letter-spacing: 0;
+      color: var(--purple);
+      text-transform: uppercase;
+    }
+
+    .study-label {
+      position: relative;
+      z-index: 1;
+      margin: -24px auto 34px;
+      text-align: center;
+      color: #4b4b4b;
+      font-weight: 700;
+    }
+
+    .menu {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 28px;
+      width: min(410px, 100%);
+      margin: 0 auto;
+    }
+
+    .menu button {
+      width: 100%;
+      min-height: 58px;
+      border: 2px solid #222222;
+      background: var(--white);
+      color: #000000;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.12);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .menu button:hover,
+    .menu button:focus {
+      outline: 3px solid rgba(21, 130, 243, 0.24);
+      background: #f5fbff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .menu button.active {
+      border-color: var(--blue-dark);
+      background: #eaf4ff;
+      color: var(--blue-dark);
+    }
+
+    .content {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .side-card,
+    .section {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 36px rgba(24, 44, 79, 0.08);
+    }
+
+    .side-card {
+      padding: 18px;
+    }
+
+    .side-card h2,
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .side-card p,
+    .section p,
+    .section li {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .side-card p {
+      margin: 0 0 12px;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eaf4ff;
+      color: var(--blue-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .section {
+      display: none;
+      padding: 24px;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section h3 {
+      margin: 22px 0 8px;
+      font-size: 18px;
+    }
+
+    .section ul,
+    .section ol {
+      margin: 8px 0 0;
+      padding-left: 22px;
+    }
+
+    .notice {
+      margin: 16px 0;
+      padding: 14px 16px;
+      border-left: 5px solid var(--blue);
+      background: var(--soft);
+      color: #344054;
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .primary,
+    .secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 6px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .secondary {
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    .question-card {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .video-placeholder {
+      display: grid;
+      place-items: center;
+      min-height: 170px;
+      margin: 12px 0 16px;
+      border: 1px dashed #9fb4d0;
+      border-radius: 8px;
+      background: #f2f7ff;
+      color: #315b8c;
+      font-weight: 800;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 6px;
+      margin: 10px 0;
+    }
+
+    .scale span {
+      display: grid;
+      place-items: center;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #ffffff;
+      font-weight: 700;
+      color: #3c4654;
+    }
+
+    footer {
+      margin: 24px 0 8px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        min-height: auto;
+        padding: 34px 20px 38px;
+        border-radius: 34px;
+      }
+
+      .hero::before,
+      .hero::after,
+      .corner-line {
+        display: none;
+      }
+
+      .menu {
+        gap: 16px;
+      }
+
+      .menu button {
+        font-size: 19px;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .scale {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Hello, this is my website</h1>
-  <p>Welcome to my GitHub Pages site.</p>
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="corner-line"></div>
+      <h1 id="page-title">Welcome to User-Study Evaluation</h1>
+      <p class="study-label">Automated Sign Language Generator Evaluation, Monash University</p>
+
+      <nav class="menu" aria-label="Study sections">
+        <button class="active" type="button" data-section="description">Project Description</button>
+        <button type="button" data-section="screening">Screening</button>
+        <button type="button" data-section="tutorial">Tutorial</button>
+        <button type="button" data-section="evaluation">Evaluation</button>
+      </nav>
+    </section>
+
+    <section class="content" aria-live="polite">
+      <aside class="side-card">
+        <h2>Study Overview</h2>
+        <p>This study evaluates real and AI-generated sign language videos.</p>
+        <p>Participants should be adults who are proficient in ASL, German Sign Language, or Chinese Sign Language.</p>
+        <span class="status">Project ID 52521</span>
+      </aside>
+
+      <article id="description" class="section active">
+        <h2>Project Description</h2>
+        <p>
+          This research evaluates automated sign language generation systems. These systems create sign language videos or 3D signing avatars from text or other input.
+        </p>
+        <p>
+          Computer-based scores do not always show whether generated signs are easy to understand, natural to watch, or clear in meaning. For this reason, feedback from people who are proficient in sign language is important.
+        </p>
+        <h3>What you will do</h3>
+        <ul>
+          <li>Watch short sign language videos.</li>
+          <li>Answer questions about recognition, naturalness, clarity, and intended meaning.</li>
+          <li>Complete a short screening task if required.</li>
+          <li>Use media controls such as pause, replay, or playback speed where available.</li>
+        </ul>
+        <div class="notice">
+          Participation is voluntary. You may stop before submitting your responses, and you may skip any question that you do not want to answer.
+        </div>
+        <div class="actions">
+          <a class="primary" href="#" data-jump="screening">Continue to Screening</a>
+          <a class="secondary" href="mailto:kaustubh.kundu@monash.edu">Contact Researcher</a>
+        </div>
+      </article>
+
+      <article id="screening" class="section">
+        <h2>Screening</h2>
+        <p>
+          The screening task helps the research team confirm that participants can understand the type of sign language material used in the study.
+        </p>
+        <h3>Eligibility</h3>
+        <ul>
+          <li>You are 18 years of age or older.</li>
+          <li>You are proficient in American Sign Language, German Sign Language, or Chinese Sign Language.</li>
+          <li>You can watch short sign language videos and answer online survey questions.</li>
+        </ul>
+        <h3>Screening task</h3>
+        <p>
+          You may watch a small number of real sign language videos and identify the sign or sentence shown. This is not a clinical, diagnostic, or educational assessment.
+        </p>
+        <div class="actions">
+          <a class="primary" href="#" data-jump="tutorial">Continue to Tutorial</a>
+        </div>
+      </article>
+
+      <article id="tutorial" class="section">
+        <h2>Tutorial</h2>
+        <p>
+          In the main task, each video is followed by the same set of questions. Some videos may show real signing, and some may show generated signing avatars. You will not be told which condition each video belongs to during the evaluation.
+        </p>
+        <h3>How to answer</h3>
+        <ol>
+          <li>Watch the video carefully.</li>
+          <li>Write what sign or sentence you think was shown.</li>
+          <li>Rate how easy it was to recognise.</li>
+          <li>Rate how natural the signing motion looked.</li>
+          <li>Rate how clearly the video conveyed its intended meaning.</li>
+          <li>Select the sentence that best matches the video.</li>
+        </ol>
+        <div class="notice">
+          The webpage may record basic interaction information such as replay, pause, playback speed, and approximate time spent on each video question. It will not use webcam recording, screen recording, audio recording, or keystroke logging.
+        </div>
+        <div class="actions">
+          <a class="primary" href="#" data-jump="evaluation">Continue to Evaluation</a>
+        </div>
+      </article>
+
+      <article id="evaluation" class="section">
+        <h2>Evaluation</h2>
+        <p>
+          This section shows the structure of the video evaluation task. Replace the placeholder with your final survey link or video evaluation system when it is ready.
+        </p>
+        <div class="question-card">
+          <strong>Example Video Question</strong>
+          <div class="video-placeholder">Video will appear here</div>
+          <p><strong>How easy was it to recognise the sign or sentence?</strong></p>
+          <div class="scale" aria-label="Rating scale from 0 to 10">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+          </div>
+          <p><strong>How natural did the signing motion look?</strong></p>
+          <div class="scale" aria-label="Rating scale from 0 to 10">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+          </div>
+          <p><strong>How clearly did the video convey its intended meaning?</strong></p>
+          <div class="scale" aria-label="Rating scale from 0 to 10">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="primary" href="#">Survey link to be inserted</a>
+          <a class="secondary" href="#" data-jump="description">Back to Project Description</a>
+        </div>
+      </article>
+    </section>
+
+    <footer>
+      Research Team: Kaustubh Kundu and Dr Matthew Butler, Faculty of Information Technology, Monash University
+    </footer>
+  </main>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll("[data-section]"));
+    const sections = Array.from(document.querySelectorAll(".section"));
+    const jumpLinks = Array.from(document.querySelectorAll("[data-jump]"));
+
+    function showSection(id) {
+      sections.forEach((section) => {
+        section.classList.toggle("active", section.id === id);
+      });
+
+      buttons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.section === id);
+      });
+
+      document.querySelector(".content").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => showSection(button.dataset.section));
+    });
+
+    jumpLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        showSection(link.dataset.jump);
+      });
+    });
+  </script>
 </body>
 </html>
