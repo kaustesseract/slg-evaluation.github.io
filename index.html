@@ -135,5 +135,23 @@
 
     <p class="footer-note">Project ID 52521</p>
   </main>
+
+  <script>
+    function initialiseParticipantId() {
+      const existingId = sessionStorage.getItem("participant_id");
+      if (existingId) {
+        return existingId;
+      }
+
+      const newId = crypto.randomUUID
+        ? crypto.randomUUID()
+        : `participant-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+      sessionStorage.setItem("participant_id", newId);
+      return newId;
+    }
+
+    initialiseParticipantId();
+  </script>
 </body>
 </html>
