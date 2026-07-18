@@ -360,25 +360,21 @@ form.addEventListener("submit",async(e)=>{
 
     const fd=new FormData(form);
 
-    const data={
+    const payload = new FormData();
 
-        action:"background",
+payload.append("action","survey");
+payload.append("participant_id",participantID);
+payload.append("age",fd.get("age"));
+payload.append("language",fd.get("language"));
+payload.append("proficiency",fd.get("proficiency"));
+payload.append("experience",fd.get("experience"));
+payload.append("regular",fd.get("regular"));
+payload.append("comments",fd.get("comments"));
 
-        participantID:participantID,
-
-        age:fd.get("age"),
-
-        language:fd.get("language"),
-
-        proficiency:fd.get("proficiency"),
-
-        experience:fd.get("experience"),
-
-        regular:fd.get("regular"),
-
-        comments:fd.get("comments")
-
-    };
+await fetch(SCRIPT_URL,{
+    method:"POST",
+    body:payload
+});
 
     try{
 
