@@ -72,6 +72,24 @@
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.96);
       box-shadow: 0 12px 36px rgba(24, 44, 79, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("Arms_of_Monash_University.svg") center center no-repeat;
+      background-size: 650px;
+      opacity: 0.09;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content > * {
+      position: relative;
+      z-index: 1;
     }
 
     h2 {
@@ -101,7 +119,7 @@
       margin: 22px 0;
       padding: 18px 20px;
       border-left: 6px solid var(--red);
-      background: #fff7e0;
+      background: rgba(255, 247, 224, 0.94);
     }
 
     .important-note ol {
@@ -119,7 +137,7 @@
       margin: 18px 0;
       padding: 15px 18px;
       border-left: 5px solid var(--blue);
-      background: var(--soft);
+      background: rgba(247, 249, 252, 0.94);
       color: #344054;
       line-height: 1.55;
     }
@@ -173,6 +191,10 @@
 
       .content {
         padding: 22px 18px;
+      }
+
+      .content::before {
+        background-size: 380px;
       }
 
       .important-note li {
