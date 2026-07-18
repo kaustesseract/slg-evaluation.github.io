@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Participant Portal</title>
+
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="header-container">
+
+<div>
+
+<img src="images/monash-logo.png"
+style="height:65px;">
+
+</div>
+
+<div class="study-title">
+
+<h1>Automated Sign Language Generator Evaluation</h1>
+
+<p>Participant Portal</p>
+
+</div>
+
+<div class="participant">
+
+Participant
+
+<br>
+
+<strong id="participantID">Loading...</strong>
+
+</div>
+
+</div>
+
+</header>
+
+<div class="progress-wrapper">
+
+<div class="progress">
+
+<div
+id="progressBar"
+class="progress-fill"
+style="width:40%">
+</div>
+
+</div>
+
+</div>
+
+<div class="container">
+
+<h2>Welcome!</h2>
+
+<p>
+
+Thank you for completing the demographic survey.
+
+Please complete the following sections in order.
+
+</p>
+
+<div class="cards">
+
+<!-- Project Description -->
+
+<div
+class="card"
+onclick="location.href='project-description.html'">
+
+<h3>
+
+📄 Project Description
+
+</h3>
+
+<p>
+
+Read about the study before beginning.
+
+</p>
+
+</div>
+
+<!-- Screening -->
+
+<div
+class="card"
+onclick="location.href='screening-language.html'">
+
+<h3>
+
+🧪 Screening
+
+</h3>
+
+<p>
+
+Verify your sign language knowledge.
+
+</p>
+
+</div>
+
+<!-- Tutorial -->
+
+<div
+class="card"
+onclick="location.href='tutorial.html'">
+
+<h3>
+
+🎥 Tutorial
+
+</h3>
+
+<p>
+
+Learn how the evaluation works.
+
+</p>
+
+</div>
+
+<!-- Evaluation -->
+
+<div
+class="card"
+onclick="location.href='evaluation.html'">
+
+<h3>
+
+✅ Evaluation
+
+</h3>
+
+<p>
+
+Begin the main evaluation task.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+Automated Sign Language Generator Evaluation
+
+<br>
+
+Monash University
+
+</footer>
+
+<script>
+
+const participant =
+sessionStorage.getItem("participantID");
+
+document
+.getElementById("participantID")
+.textContent =
+participant ?? "Unknown";
+
+</script>
+
+</body>
+
+</html>
