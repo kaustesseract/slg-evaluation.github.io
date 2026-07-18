@@ -265,32 +265,88 @@ Evaluation
 
 <script>
 
-// Generate participant ID only once
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbzDVZqyogK4lpCevhRALceTpyXuHDV6m3b1phyiRmlalIkYNv28wudxF6PMfZO03BHD/exec";
+
+//--------------------------------------------------
+// Participant ID
+//--------------------------------------------------
+
 let participantID = sessionStorage.getItem("participant_id");
 
-if(!participantID){
-
+if (!participantID) {
     participantID = crypto.randomUUID();
-
-    sessionStorage.setItem("participant_id",participantID);
-
+    sessionStorage.setItem("participant_id", participantID);
 }
 
 document.getElementById("participantID").textContent = participantID;
 
 
-// Handle questionnaire submission
+//--------------------------------------------------
+// Submit survey
+//--------------------------------------------------
 
-document.getElementById("surveyForm").addEventListener("submit",function(e){
+document.getElementById("surveyForm").addEventListener("submit", async function(e){
 
     e.preventDefault();
 
-    // Next step:
-    // Here we'll send A1-A6 responses to Google Apps Script.
+    const submitButton = this.querySelector("button");
+    submitButton.disabled = true;
+    submitButton.textContent = "Saving...";
 
-    document.getElementById("survey").style.display="none";
+    const form = new FormData(this);
 
-    document.getElementById("menu").style.display="block";
+    const data = {
+
+        action: "background",
+
+        participantID: participantID,
+
+        age: form.get("age"),
+
+        language: form.get("language"),
+
+        proficiency: form.get("proficiency"),
+
+        experience: form.get("experience"),
+
+        regular: form.get("regular"),
+
+        comments: form.get("comments")
+
+    };
+
+    try{
+
+        const response = await fetch(SCRIPT_URL,{
+
+            method:"POST",
+
+            body:JSON.stringify(data)
+
+        });
+
+        const result = await response.text();
+
+        console.log(result);
+
+        document.getElementById("survey").style.display="none";
+
+        document.getElementById("menu").style.display="block";
+
+    }
+
+    catch(error){
+
+        alert("Unable to save your responses. Please check your internet connection and try again.");
+
+        console.error(error);
+
+        submitButton.disabled = false;
+
+        submitButton.textContent = "Submit & Continue";
+
+    }
 
 });
 
