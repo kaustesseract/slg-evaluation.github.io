@@ -80,6 +80,26 @@ button:disabled{
     cursor:not-allowed;
 }
 
+
+#menu::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:url("Arms_of_Monash_University.svg")
+               center center
+               no-repeat;
+
+    background-size:650px;
+
+    opacity:0.035;
+
+    pointer-events:none;
+
+}    
 #menu{
     display:none;
 }
