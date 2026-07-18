@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Language Background</title>
+
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="header-container">
+
+<div>
+<img src="images/monash-logo.png"
+style="height:65px;">
+</div>
+
+<div class="study-title">
+
+<h1>Automated Sign Language Generator Evaluation</h1>
+
+<p>Language Background</p>
+
+</div>
+
+<div class="participant">
+
+Participant
+
+<br>
+
+<strong>Pending</strong>
+
+</div>
+
+</div>
+
+</header>
+
+<div class="progress-wrapper">
+
+<div class="progress">
+
+<div class="progress-fill" style="width:33%"></div>
+
+</div>
+
+</div>
+
+<div class="container">
+
+<h2>Language Background</h2>
+
+<p>
+
+These final questions help us understand your experience
+with sign language.
+
+</p>
+
+<!-- Question 4 -->
+
+<div class="question">
+
+<h3>
+
+4. How many years have you used sign language?
+
+</h3>
+
+<label class="option">
+<input type="radio" name="years" value="<1">
+Less than 1 year
+</label>
+
+<label class="option">
+<input type="radio" name="years" value="1-3">
+1–3 years
+</label>
+
+<label class="option">
+<input type="radio" name="years" value="4-7">
+4–7 years
+</label>
+
+<label class="option">
+<input type="radio" name="years" value=">7">
+More than 7 years
+</label>
+
+</div>
+
+<!-- Question 5 -->
+
+<div class="question">
+
+<h3>
+
+5. How frequently do you communicate using sign language?
+
+</h3>
+
+<label class="option">
+<input type="radio" name="frequency" value="Daily">
+Daily
+</label>
+
+<label class="option">
+<input type="radio" name="frequency" value="Weekly">
+Weekly
+</label>
+
+<label class="option">
+<input type="radio" name="frequency" value="Monthly">
+Monthly
+</label>
+
+<label class="option">
+<input type="radio" name="frequency" value="Occasionally">
+Occasionally
+</label>
+
+</div>
+
+<!-- Question 6 -->
+
+<div class="question">
+
+<h3>
+
+6. How would you rate your sign language proficiency?
+
+</h3>
+
+<label class="option">
+<input type="radio" name="proficiency" value="Beginner">
+Beginner
+</label>
+
+<label class="option">
+<input type="radio" name="proficiency" value="Intermediate">
+Intermediate
+</label>
+
+<label class="option">
+<input type="radio" name="proficiency" value="Advanced">
+Advanced
+</label>
+
+<label class="option">
+<input type="radio" name="proficiency" value="Native">
+Native / Fluent
+</label>
+
+</div>
+
+<div class="button-row">
+
+<button
+class="secondary"
+onclick="history.back()">
+
+← Previous
+
+</button>
+
+<button
+id="continueButton">
+
+Continue →
+
+</button>
+
+</div>
+
+</div>
+
+<footer>
+
+Automated Sign Language Generator Evaluation
+
+<br>
+
+Monash University
+
+</footer>
+
+<script>
+
+function generateParticipantID(){
+
+    if(sessionStorage.getItem("participantID")){
+
+        return sessionStorage.getItem("participantID");
+
+    }
+
+    let id;
+
+    if(window.crypto && crypto.randomUUID){
+
+        id=crypto.randomUUID();
+
+    }else{
+
+        id="participant-"+Date.now()+"-"+Math.random().toString(36).substring(2,8);
+
+    }
+
+    sessionStorage.setItem("participantID",id);
+
+    return id;
+
+}
+
+document
+.getElementById("continueButton")
+.addEventListener("click",async()=>{
+
+const years=
+document.querySelector('input[name="years"]:checked');
+
+const frequency=
+document.querySelector('input[name="frequency"]:checked');
+
+const proficiency=
+document.querySelector('input[name="proficiency"]:checked');
+
+if(!years||!frequency||!proficiency){
+
+alert("Please answer all questions.");
+
+return;
+
+}
+
+sessionStorage.setItem("years",years.value);
+
+sessionStorage.setItem("frequency",frequency.value);
+
+sessionStorage.setItem("proficiency",proficiency.value);
+
+const participantID=generateParticipantID();
+
+console.log("Participant:",participantID);
+
+/*
+Next file (api.js) will send:
+
+participantID
+
+age
+
+gender
+
+education
+
+years
+
+frequency
+
+proficiency
+
+to Google Apps Script.
+*/
+
+window.location.href="portal.html";
+
+});
+
+</script>
+
+</body>
+
+</html>
