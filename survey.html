@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Eligibility Survey</title>
+<title>Survey</title>
 
 <style>
 
@@ -37,7 +37,7 @@ body{
                center center
                no-repeat;
     background-size:650px;
-    opacity:.07;
+    opacity:.09;
     pointer-events:none;
 
 }
@@ -181,7 +181,7 @@ button:disabled{
 
 <div id="survey">
 
-<h1>Eligibility Survey</h1>
+<h1>Survey</h1>
 
 <p class="subtitle">
 
@@ -276,7 +276,7 @@ placeholder="Optional"></textarea>
 
 <button id="submitBtn" type="submit">
 
-Submit Eligibility Survey
+Submit Survey
 
 </button>
 
@@ -287,7 +287,7 @@ Submit Eligibility Survey
 
 <div id="menu" style="display:none;">
 
-<h1>Eligibility Survey Completed</h1>
+<h1>Survey Completed</h1>
 
 <p class="participant">
 
@@ -390,7 +390,7 @@ form.addEventListener("submit",async(e)=>{
 
         submitBtn.disabled=false;
 
-        submitBtn.textContent="Submit Eligibility Survey";
+        submitBtn.textContent="Submit Survey";
 
     }
 
