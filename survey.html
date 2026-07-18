@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Survey</title>
+<title>Eligibility Survey</title>
 
 <style>
 
@@ -37,7 +37,7 @@ body{
                center center
                no-repeat;
     background-size:650px;
-    opacity:.09;
+    opacity:.07;
     pointer-events:none;
 
 }
@@ -181,7 +181,7 @@ button:disabled{
 
 <div id="survey">
 
-<h1>Survey</h1>
+<h1>Eligibility Survey</h1>
 
 <p class="subtitle">
 
@@ -333,23 +333,17 @@ Begin Screening
 
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzDVZqyogK4lpCevhRALceTpyXuHDV6m3b1phyiRmlalIkYNv28wudxF6PMfZO03BHD/exec";
 
-
 let participantID=sessionStorage.getItem("participant_id");
 
 if(!participantID){
-
     participantID=crypto.randomUUID();
-
     sessionStorage.setItem("participant_id",participantID);
-
 }
 
 document.getElementById("participantID").textContent=participantID;
 
-
 const form=document.getElementById("surveyForm");
 const submitBtn=document.getElementById("submitBtn");
-
 
 form.addEventListener("submit",async(e)=>{
 
@@ -360,50 +354,30 @@ form.addEventListener("submit",async(e)=>{
 
     const fd=new FormData(form);
 
-    const payload = new FormData();
-
-payload.append("action","survey");
-payload.append("participant_id",participantID);
-payload.append("age",fd.get("age"));
-payload.append("language",fd.get("language"));
-payload.append("proficiency",fd.get("proficiency"));
-payload.append("experience",fd.get("experience"));
-payload.append("regular",fd.get("regular"));
-payload.append("comments",fd.get("comments"));
-
-await fetch(SCRIPT_URL,{
-    method:"POST",
-    body:payload
-});
+    const payload=new FormData();
+    payload.append("action","background");
+    payload.append("participant_id",participantID);
+    payload.append("age",fd.get("age") || "");
+    payload.append("language",fd.get("language") || "");
+    payload.append("proficiency",fd.get("proficiency") || "");
+    payload.append("experience",fd.get("experience") || "");
+    payload.append("regular",fd.get("regular") || "");
+    payload.append("comments",fd.get("comments") || "");
 
     try{
 
-        const response=await fetch(SCRIPT_URL,{
-
+        await fetch(SCRIPT_URL,{
             method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify(data)
-
+            mode:"no-cors",
+            body:payload
         });
-
-        if(!response.ok){
-
-            throw new Error("Upload failed");
-
-        }
 
         document.getElementById("survey").style.display="none";
         document.getElementById("menu").style.display="block";
 
         window.scrollTo({
-
             top:0,
             behavior:"smooth"
-
         });
 
     }
@@ -427,4 +401,3 @@ await fetch(SCRIPT_URL,{
 </body>
 
 </html>  
-  
