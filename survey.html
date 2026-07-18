@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Eligibility Survey</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#eef2f7;
+}
+
+.container{
+
+    max-width:900px;
+    margin:40px auto;
+    background:white;
+    padding:40px;
+    border-radius:16px;
+    box-shadow:0 8px 25px rgba(0,0,0,.12);
+    position:relative;
+
+}
+
+.container::before{
+
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("Arms_of_Monash_University.svg")
+               center center
+               no-repeat;
+    background-size:650px;
+    opacity:.07;
+    pointer-events:none;
+
+}
+
+.content{
+
+    position:relative;
+    z-index:1;
+
+}
+
+h1{
+
+    text-align:center;
+    color:#003366;
+
+}
+
+.subtitle{
+
+    text-align:center;
+    color:#666;
+    margin-bottom:35px;
+    line-height:1.7;
+
+}
+
+.question{
+
+    margin-top:28px;
+
+}
+
+.question h3{
+
+    color:#003366;
+    margin-bottom:12px;
+
+}
+
+label{
+
+    display:block;
+    margin:8px 0;
+
+}
+
+textarea{
+
+    width:100%;
+    min-height:120px;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    resize:vertical;
+    font-size:15px;
+
+}
+
+button{
+
+    width:100%;
+    margin-top:35px;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:#0055cc;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:#003d99;
+
+}
+
+button:disabled{
+
+    background:#999;
+    cursor:not-allowed;
+
+}
+
+.menu-grid{
+
+    display:grid;
+    gap:20px;
+    margin-top:30px;
+
+}
+
+.menu-card{
+
+    display:block;
+    text-align:center;
+    text-decoration:none;
+    background:#0055cc;
+    color:white;
+    padding:18px;
+    border-radius:10px;
+    font-size:20px;
+    transition:.2s;
+
+}
+
+.menu-card:hover{
+
+    background:#003d99;
+
+}
+
+.success{
+
+    text-align:center;
+    color:green;
+    font-weight:bold;
+    margin-top:20px;
+
+}
+
+.participant{
+
+    text-align:center;
+    color:#666;
+    margin-top:25px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="content">
+
+<div id="survey">
+
+<h1>Eligibility Survey</h1>
+
+<p class="subtitle">
+
+Please complete this short eligibility questionnaire before beginning the screening.
+
+</p>
+
+<form id="surveyForm">
+
+<div class="question">
+
+<h3>A1. Are you 18 years of age or older?</h3>
+
+<label><input type="radio" name="age" value="Yes" required> Yes</label>
+
+<label><input type="radio" name="age" value="No"> No</label>
+
+</div>
+
+
+<div class="question">
+
+<h3>A2. Which sign language are you proficient in?</h3>
+
+<label><input type="radio" name="language" value="Auslan" required> Australian Sign Language (Auslan)</label>
+
+<label><input type="radio" name="language" value="ASL"> American Sign Language (ASL)</label>
+
+<label><input type="radio" name="language" value="Other"> Other</label>
+
+<label><input type="radio" name="language" value="None"> None of the above</label>
+
+</div>
+
+
+<div class="question">
+
+<h3>A3. How would you describe your proficiency?</h3>
+
+<label><input type="radio" name="proficiency" value="Beginner" required> Beginner</label>
+
+<label><input type="radio" name="proficiency" value="Intermediate"> Intermediate</label>
+
+<label><input type="radio" name="proficiency" value="Advanced"> Advanced</label>
+
+<label><input type="radio" name="proficiency" value="Native"> Native or near-native</label>
+
+<label><input type="radio" name="proficiency" value="Professional"> Professional or interpreter-level</label>
+
+</div>
+
+ <div class="question">
+
+<h3>A4. How many years of experience do you have?</h3>
+
+<label><input type="radio" name="experience" value="Less than 1 year" required> Less than 1 year</label>
+
+<label><input type="radio" name="experience" value="1-3 years"> 1–3 years</label>
+
+<label><input type="radio" name="experience" value="4-7 years"> 4–7 years</label>
+
+<label><input type="radio" name="experience" value="8-10 years"> 8–10 years</label>
+
+<label><input type="radio" name="experience" value="More than 10 years"> More than 10 years</label>
+
+</div>
+
+
+<div class="question">
+
+<h3>A5. Do you regularly watch, use, teach, interpret, or communicate in this sign language?</h3>
+
+<label><input type="radio" name="regular" value="Yes" required> Yes</label>
+
+<label><input type="radio" name="regular" value="No"> No</label>
+
+<label><input type="radio" name="regular" value="Prefer not to say"> Prefer not to say</label>
+
+</div>
+
+
+<div class="question">
+
+<h3>A6. Do you have any comments about your sign language background or experience?</h3>
+
+<textarea
+name="comments"
+placeholder="Optional"></textarea>
+
+</div>
+
+
+<button id="submitBtn" type="submit">
+
+Submit Eligibility Survey
+
+</button>
+
+</form>
+
+</div>
+
+
+<div id="menu" style="display:none;">
+
+<h1>Eligibility Survey Completed</h1>
+
+<p class="participant">
+
+Participant ID
+
+<br><br>
+
+<strong id="participantID"></strong>
+
+</p>
+
+<p class="success">
+
+&#10003; Your responses have been recorded successfully.
+
+</p>
+
+<p style="text-align:center;color:#666;margin-top:20px;">
+
+You are now ready to begin the screening task.
+
+</p>
+
+<div class="menu-grid">
+
+<a class="menu-card"
+
+href="screening-language.html">
+
+Begin Screening
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div> 
+
+<script>
+
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzDVZqyogK4lpCevhRALceTpyXuHDV6m3b1phyiRmlalIkYNv28wudxF6PMfZO03BHD/exec";
+
+
+let participantID=sessionStorage.getItem("participant_id");
+
+if(!participantID){
+
+    participantID=crypto.randomUUID();
+
+    sessionStorage.setItem("participant_id",participantID);
+
+}
+
+document.getElementById("participantID").textContent=participantID;
+
+
+const form=document.getElementById("surveyForm");
+const submitBtn=document.getElementById("submitBtn");
+
+
+form.addEventListener("submit",async(e)=>{
+
+    e.preventDefault();
+
+    submitBtn.disabled=true;
+    submitBtn.textContent="Saving Responses...";
+
+    const fd=new FormData(form);
+
+    const data={
+
+        action:"background",
+
+        participantID:participantID,
+
+        age:fd.get("age"),
+
+        language:fd.get("language"),
+
+        proficiency:fd.get("proficiency"),
+
+        experience:fd.get("experience"),
+
+        regular:fd.get("regular"),
+
+        comments:fd.get("comments")
+
+    };
+
+    try{
+
+        const response=await fetch(SCRIPT_URL,{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify(data)
+
+        });
+
+        if(!response.ok){
+
+            throw new Error("Upload failed");
+
+        }
+
+        document.getElementById("survey").style.display="none";
+        document.getElementById("menu").style.display="block";
+
+        window.scrollTo({
+
+            top:0,
+            behavior:"smooth"
+
+        });
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert("Unable to save your responses. Please try again.");
+
+        submitBtn.disabled=false;
+
+        submitBtn.textContent="Submit Eligibility Survey";
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>  
+  
