@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -16,99 +17,57 @@ body{
 }
 
 .container{
+
     max-width:900px;
-    margin:40px auto;
+    margin:50px auto;
     background:white;
-    padding:40px;
+    padding:50px;
     border-radius:16px;
     box-shadow:0 8px 25px rgba(0,0,0,.12);
+    position:relative;
+
+}
+
+.container::before{
+
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("Arms_of_Monash_University.svg") center center no-repeat;
+    background-size:600px;
+    opacity:.07;
+    pointer-events:none;
+
+}
+
+.content{
+
+    position:relative;
+    z-index:1;
+
 }
 
 h1{
+
     text-align:center;
     color:#003366;
+
 }
 
 .subtitle{
+
     text-align:center;
     color:#666;
-    margin-bottom:35px;
-}
+    line-height:1.7;
+    margin-top:20px;
+    margin-bottom:45px;
 
-.question{
-    margin-top:28px;
-}
-
-.question h3{
-    color:#003366;
-    margin-bottom:12px;
-}
-
-label{
-    display:block;
-    margin:8px 0;
-}
-
-textarea{
-    width:100%;
-    min-height:110px;
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    resize:vertical;
-    font-size:15px;
-}
-
-button{
-    width:100%;
-    margin-top:35px;
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    background:#0055cc;
-    color:white;
-    font-size:18px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#003d99;
-}
-
-button:disabled{
-    background:#999;
-    cursor:not-allowed;
-}
-
-
-#menu::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    background:url("Arms_of_Monash_University.svg")
-               center center
-               no-repeat;
-
-    background-size:650px;
-
-    opacity:0.075;
-
-    pointer-events:none;
-
-}    
-#menu{
-    display:none;
 }
 
 .menu-grid{
 
     display:grid;
-    gap:18px;
-    margin-top:30px;
+    gap:20px;
 
 }
 
@@ -117,11 +76,17 @@ button:disabled{
     display:block;
     text-decoration:none;
     text-align:center;
-    padding:20px;
+
+    padding:22px;
+
     background:#0055cc;
+
     color:white;
+
     border-radius:10px;
-    font-size:20px;
+
+    font-size:22px;
+
     transition:.2s;
 
 }
@@ -129,21 +94,6 @@ button:disabled{
 .menu-card:hover{
 
     background:#003d99;
-
-}
-
-.success{
-
-    text-align:center;
-    color:green;
-    font-weight:bold;
-
-}
-
-.participant{
-
-    text-align:center;
-    color:#666;
 
 }
 
@@ -155,132 +105,29 @@ button:disabled{
 
 <div class="container">
 
-<div id="survey">
+<div class="content">
 
 <h1>Automated Sign Language Generator</h1>
 
 <p class="subtitle">
 
-Please complete this short eligibility questionnaire before beginning the study.
+Welcome to the Automated Sign Language Generator Evaluation Study.
 
-</p>
-
-<form id="surveyForm">
-
-<div class="question">
-
-<h3>A1. Are you 18 years of age or older?</h3>
-
-<label><input type="radio" name="age" value="Yes" required> Yes</label>
-<label><input type="radio" name="age" value="No"> No</label>
-
-</div>
-
-<div class="question">
-
-<h3>A2. Which sign language are you proficient in?</h3>
-
-<label><input type="radio" name="language" value="Auslan" required> Australian Sign Language (Auslan)</label>
-<label><input type="radio" name="language" value="ASL"> American Sign Language (ASL)</label>
-<label><input type="radio" name="language" value="Other"> Other</label>
-<label><input type="radio" name="language" value="None"> None of the above</label>
-
-</div>
-
-<div class="question">
-
-<h3>A3. How would you describe your proficiency?</h3>
-
-<label><input type="radio" name="proficiency" value="Beginner" required> Beginner</label>
-<label><input type="radio" name="proficiency" value="Intermediate"> Intermediate</label>
-<label><input type="radio" name="proficiency" value="Advanced"> Advanced</label>
-<label><input type="radio" name="proficiency" value="Native"> Native or near-native</label>
-<label><input type="radio" name="proficiency" value="Professional"> Professional or interpreter-level</label>
-
-</div>
-
-<div class="question">
-
-<h3>A4. How many years of experience do you have?</h3>
-
-<label><input type="radio" name="experience" value="Less than 1 year" required> Less than 1 year</label>
-<label><input type="radio" name="experience" value="1-3 years"> 1–3 years</label>
-<label><input type="radio" name="experience" value="4-7 years"> 4–7 years</label>
-<label><input type="radio" name="experience" value="8-10 years"> 8–10 years</label>
-<label><input type="radio" name="experience" value="More than 10 years"> More than 10 years</label>
-
-</div>
-
-<div class="question">
-
-<h3>A5. Do you regularly watch, use, teach, interpret, or communicate in this sign language?</h3>
-
-<label><input type="radio" name="regular" value="Yes" required> Yes</label>
-<label><input type="radio" name="regular" value="No"> No</label>
-<label><input type="radio" name="regular" value="Prefer not to say"> Prefer not to say</label>
-
-</div>
-
-<div class="question">
-
-<h3>A6. Do you have any comments about your sign language background or experience?</h3>
-
-<textarea
-name="comments"
-placeholder="Optional"></textarea>
-
-</div>
-
-<button id="submitBtn" type="submit">
-
-Submit & Continue
-
-</button>
-
-</form>
-
-</div>
-
-<div id="menu">
-
-<h1>Welcome!</h1>
-
-<p class="participant">
-
-Participant ID:
-<strong id="participantID"></strong>
-
-</p>
-
-<p class="success">
-
-✓ Background questionnaire completed successfully.
+Please begin by completing the eligibility survey or read the project description before participating.
 
 </p>
 
 <div class="menu-grid">
 
+<a class="menu-card" href="survey.html">
+
+Eligibility Survey
+
+</a>
+
 <a class="menu-card" href="project-description.html">
 
 Project Description
-
-</a>
-
-<a class="menu-card" href="screening-language.html">
-
-Screening
-
-</a>
-
-<a class="menu-card" href="tutorial.html">
-
-Tutorial
-
-</a>
-
-<a class="menu-card" href="evaluation.html">
-
-Evaluation
 
 </a>
 
@@ -292,86 +139,17 @@ Evaluation
 
 <script>
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDVZqyogK4lpCevhRALceTpyXuHDV6m3b1phyiRmlalIkYNv28wudxF6PMfZO03BHD/exec";
-let participantID=sessionStorage.getItem("participant_id");
+if(!sessionStorage.getItem("participant_id")){
 
-if(!participantID){
-
-    participantID=crypto.randomUUID();
-
-    sessionStorage.setItem("participant_id",participantID);
+    sessionStorage.setItem(
+        "participant_id",
+        crypto.randomUUID()
+    );
 
 }
-
-document.getElementById("participantID").textContent=participantID;
-
-const form=document.getElementById("surveyForm");
-const submitBtn=document.getElementById("submitBtn");
-
-form.addEventListener("submit",async(e)=>{
-
-    e.preventDefault();
-
-    submitBtn.disabled=true;
-    submitBtn.textContent="Saving...";
-
-    const fd=new FormData(form);
-
-    const data={
-
-        action:"background",
-
-        participantID:participantID,
-
-        age:fd.get("age"),
-
-        language:fd.get("language"),
-
-        proficiency:fd.get("proficiency"),
-
-        experience:fd.get("experience"),
-
-        regular:fd.get("regular"),
-
-        comments:fd.get("comments")
-
-    };
-
-    try{
-
-        const response=await fetch(SCRIPT_URL,{
-
-            method:"POST",
-
-            body:JSON.stringify(data)
-
-        });
-
-        if(!response.ok){
-
-            throw new Error("Upload failed");
-
-        }
-
-        document.getElementById("survey").style.display="none";
-        document.getElementById("menu").style.display="block";
-
-    }
-
-    catch(err){
-
-        alert("Unable to save your responses. Please try again.");
-
-        console.error(err);
-
-        submitBtn.disabled=false;
-        submitBtn.textContent="Submit & Continue";
-
-    }
-
-});
 
 </script>
 
 </body>
+
 </html>
