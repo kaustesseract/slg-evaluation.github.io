@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Automated Sign Language Generator Evaluation</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="header-container">
+
+        <div>
+            <img src="images/monash-logo.png"
+                 alt="Monash University"
+                 style="height:65px;">
+        </div>
+
+        <div class="study-title">
+
+            <h1>Automated Sign Language Generator Evaluation</h1>
+
+            <p>Monash University</p>
+
+        </div>
+
+        <div class="participant">
+
+            Participant<br>
+
+            <strong>Not Assigned</strong>
+
+        </div>
+
+    </div>
+
+</header>
+
+<div class="progress-wrapper">
+
+    <div class="progress">
+
+        <div class="progress-fill" style="width:16%"></div>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+    <h2>Welcome!</h2>
+
+    <p>
+
+        Thank you for participating in our study.
+
+        Before beginning the evaluation, we would like to know a little about you.
+
+        This survey will take less than one minute.
+
+    </p>
+
+    <!-- Question 1 -->
+
+    <div class="question">
+
+        <h3>1. What is your age?</h3>
+
+        <label class="option">
+            <input type="radio" name="age" value="18-24">
+            18–24
+        </label>
+
+        <label class="option">
+            <input type="radio" name="age" value="25-34">
+            25–34
+        </label>
+
+        <label class="option">
+            <input type="radio" name="age" value="35-44">
+            35–44
+        </label>
+
+        <label class="option">
+            <input type="radio" name="age" value="45-54">
+            45–54
+        </label>
+
+        <label class="option">
+            <input type="radio" name="age" value="55+">
+            55+
+        </label>
+
+    </div>
+
+    <!-- Question 2 -->
+
+    <div class="question">
+
+        <h3>2. What is your gender?</h3>
+
+        <label class="option">
+            <input type="radio" name="gender" value="Male">
+            Male
+        </label>
+
+        <label class="option">
+            <input type="radio" name="gender" value="Female">
+            Female
+        </label>
+
+        <label class="option">
+            <input type="radio" name="gender" value="Non-binary">
+            Non-binary
+        </label>
+
+        <label class="option">
+            <input type="radio" name="gender" value="Prefer not to disclose">
+            Prefer not to disclose
+        </label>
+
+        <label class="option">
+            <input type="radio" name="gender" value="Self describe">
+            Self describe
+        </label>
+
+    </div>
+
+    <!-- Question 3 -->
+
+    <div class="question">
+
+        <h3>3. What is the highest level of education you have completed?</h3>
+
+        <label class="option">
+            <input type="radio" name="education" value="High School">
+            High School
+        </label>
+
+        <label class="option">
+            <input type="radio" name="education" value="Bachelor">
+            Bachelor's Degree
+        </label>
+
+        <label class="option">
+            <input type="radio" name="education" value="Master">
+            Master's Degree
+        </label>
+
+        <label class="option">
+            <input type="radio" name="education" value="Doctorate">
+            Doctoral Degree
+        </label>
+
+        <label class="option">
+            <input type="radio" name="education" value="Other">
+            Other
+        </label>
+
+    </div>
+
+    <div class="button-row">
+
+        <div></div>
+
+        <button id="continueButton">
+
+            Continue →
+
+        </button>
+
+    </div>
+
+</div>
+
+<footer>
+
+    Automated Sign Language Generator Evaluation
+
+    <br>
+
+    Monash University
+
+    <br>
+
+    Human-Centred AI Research
+
+</footer>
+
+<script>
+
+document
+.getElementById("continueButton")
+.addEventListener("click",function(){
+
+    const age =
+    document.querySelector('input[name="age"]:checked');
+
+    const gender =
+    document.querySelector('input[name="gender"]:checked');
+
+    const education =
+    document.querySelector('input[name="education"]:checked');
+
+    if(!age || !gender || !education){
+
+        alert("Please answer all questions before continuing.");
+
+        return;
+
+    }
+
+    sessionStorage.setItem(
+        "age",
+        age.value
+    );
+
+    sessionStorage.setItem(
+        "gender",
+        gender.value
+    );
+
+    sessionStorage.setItem(
+        "education",
+        education.value
+    );
+
+    window.location.href="survey2.html";
+
+});
+
+</script>
+
+</body>
+</html>
