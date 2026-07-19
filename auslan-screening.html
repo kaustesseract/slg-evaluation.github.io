@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auslan Screening</title>
+  <style>
+    :root {
+      --ink: #171717;
+      --muted: #3f4652;
+      --panel: #fff3bf;
+      --panel-deep: #ffe174;
+      --purple: #ff4cff;
+      --blue: #0f61b9;
+      --white: #ffffff;
+      --border: #d6b849;
+      --line: #d9dee7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(20, 20, 20, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 20, 20, 0.04) 1px, transparent 1px),
+        #ffffff;
+      background-size: 16px 16px;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    .screening-panel {
+      width: min(920px, 100%);
+      padding: 42px 32px 50px;
+      border: 1px solid var(--border);
+      border-radius: 72px;
+      background: linear-gradient(160deg, var(--panel), var(--panel-deep));
+      box-shadow: 0 20px 60px rgba(42, 84, 140, 0.14);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 28px;
+      color: var(--purple);
+      font-size: clamp(32px, 4.2vw, 48px);
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .instruction {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0 28px;
+      padding: 14px 24px;
+      border: 2px solid rgba(191, 92, 255, 0.45);
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ffffff 0%, #f5e8ff 45%, #eaf4ff 100%);
+      color: #8b16d8;
+      font-size: clamp(21px, 2.4vw, 28px);
+      font-weight: 900;
+      line-height: 1.25;
+      box-shadow: 0 12px 30px rgba(111, 63, 160, 0.18);
+      text-shadow: 0 1px 0 #ffffff;
+    }
+
+    .video-stage {
+      width: min(620px, 100%);
+      margin: 0 auto 28px;
+    }
+
+    .video-wrap {
+      width: min(360px, 100%);
+      margin: 0 auto;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: 0 16px 34px rgba(70, 55, 20, 0.16);
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      max-height: 380px;
+      border-radius: 8px;
+      background: #111111;
+    }
+
+    .video-count {
+      margin: -10px 0 22px;
+      color: #465266;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .answer-box {
+      width: min(560px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      display: inline-block;
+      padding: 10px 18px;
+      border: 2px solid #111111;
+      background: var(--white);
+      color: #000000;
+      font-size: clamp(22px, 2.3vw, 28px);
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    input {
+      width: 100%;
+      min-height: 54px;
+      padding: 12px 16px;
+      border: 2px solid #111111;
+      border-radius: 6px;
+      background: var(--white);
+      color: #111111;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    input:focus {
+      outline: 3px solid rgba(15, 97, 185, 0.24);
+      border-color: var(--blue);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button,
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 2px solid #111111;
+      background: var(--white);
+      color: #000000;
+      font-size: 18px;
+      font-weight: 900;
+      text-decoration: none;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      cursor: pointer;
+    }
+
+    .button:hover,
+    .button:focus,
+    button:hover,
+    button:focus {
+      outline: 3px solid rgba(15, 97, 185, 0.22);
+      background: #edf6ff;
+      color: var(--blue);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .submit-button {
+      width: min(220px, 100%);
+      margin: 6px auto 0;
+      background: var(--blue);
+      border-color: var(--blue);
+      color: var(--white);
+    }
+
+    .message {
+      min-height: 24px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 16px;
+      }
+
+      .screening-panel {
+        padding: 34px 18px 38px;
+        border-radius: 34px;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <main class="screening-panel">
+    <h1>Screening</h1>
+    <p class="instruction">Australian Sign Language (Auslan)</p>
+
+    <div class="video-stage">
+      <div class="video-wrap">
+        <video id="screening-video" controls playsinline preload="metadata">
+          <source id="video-source" src="auslan_hello.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+    <p class="video-count" id="video-count">Video 1 of 2</p>
+
+    <form class="answer-box" id="screening-form">
+      <label for="sign-answer">What is this sign?</label>
+      <input id="sign-answer" name="sign-answer" type="text" autocomplete="off" placeholder="Enter the sign name here">
+      <button class="submit-button" type="submit">Submit</button>
+      <p class="message" id="form-message" aria-live="polite"></p>
+    </form>
+
+    <div class="actions">
+      <a class="button" href="screening-language.html">Back to Language Selection</a>
+    </div>
+  </main>
+
+  <script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDVZqyogK4lpCevhRALceTpyXuHDV6m3b1phyiRmlalIkYNv28wudxF6PMfZO03BHD/exec";
+    const videos = [
+      { file: "auslan_hello.mp4", label: "Video 1" },
+      { file: "auslan_goodbye.mp4", label: "Video 2" }
+    ];
+
+    const form = document.getElementById("screening-form");
+    const answerInput = document.getElementById("sign-answer");
+    const message = document.getElementById("form-message");
+    const video = document.getElementById("screening-video");
+    const videoSource = document.getElementById("video-source");
+    const videoCount = document.getElementById("video-count");
+    let currentVideoIndex = 0;
+
+    function getParticipantId() {
+      const existingId = sessionStorage.getItem("participant_id");
+      if (existingId) {
+        return existingId;
+      }
+
+      const newId = crypto.randomUUID
+        ? crypto.randomUUID()
+        : `participant-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+      sessionStorage.setItem("participant_id", newId);
+      return newId;
+    }
+
+    function showCurrentVideo() {
+      const currentVideo = videos[currentVideoIndex];
+      video.pause();
+      videoSource.src = currentVideo.file;
+      video.load();
+      videoCount.textContent = `Video ${currentVideoIndex + 1} of ${videos.length}`;
+      answerInput.value = "";
+      message.textContent = "";
+      answerInput.focus();
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const answer = answerInput.value.trim();
+      if (!answer) {
+        message.textContent = "Please enter your answer before submitting.";
+        answerInput.focus();
+        return;
+      }
+
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+        message.textContent = "Submission is not connected yet. Add the Google Apps Script URL first.";
+        return;
+      }
+
+      const payload = new FormData();
+      payload.append("participant_id", getParticipantId());
+      payload.append("language", "Australian Sign Language (Auslan)");
+      payload.append("question", "What is this sign?");
+      payload.append("video", videos[currentVideoIndex].file);
+      payload.append("response", answer);
+
+      message.textContent = "Submitting...";
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: payload
+        });
+        if (currentVideoIndex < videos.length - 1) {
+          currentVideoIndex += 1;
+          showCurrentVideo();
+          message.textContent = "Response submitted. Please answer the next video.";
+        } else {
+          message.textContent = "All screening responses submitted. Thank you.";
+          form.reset();
+        }
+      } catch (error) {
+        message.textContent = "Submission failed. Please try again.";
+      }
+    });
+
+    showCurrentVideo();
+  </script>
+</body>
+</html>
