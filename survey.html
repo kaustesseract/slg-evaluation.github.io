@@ -355,14 +355,31 @@ form.addEventListener("submit",async(e)=>{
     const fd=new FormData(form);
 
     const payload=new FormData();
+    const age = fd.get("age") || "";
+    const language = fd.get("language") || "";
+    const proficiency = fd.get("proficiency") || "";
+    const experience = fd.get("experience") || "";
+    const regular = fd.get("regular") || "";
+    const comments = fd.get("comments") || "";
+
     payload.append("action","background");
+    payload.append("section","eligibility");
     payload.append("participant_id",participantID);
-    payload.append("age",fd.get("age") || "");
-    payload.append("language",fd.get("language") || "");
-    payload.append("proficiency",fd.get("proficiency") || "");
-    payload.append("experience",fd.get("experience") || "");
-    payload.append("regular",fd.get("regular") || "");
-    payload.append("comments",fd.get("comments") || "");
+    payload.append("participantID",participantID);
+    payload.append("age",age);
+    payload.append("language",language);
+    payload.append("proficiency",proficiency);
+    payload.append("experience",experience);
+    payload.append("regular",regular);
+    payload.append("comments",comments);
+
+    // These generic fields make the survey visible even if the Apps Script is still using the older screening-only format.
+    payload.append("question","Eligibility survey");
+    payload.append("video","N/A");
+    payload.append(
+        "response",
+        `Age 18+: ${age} | Language: ${language} | Proficiency: ${proficiency} | Experience: ${experience} | Regular use: ${regular} | Comments: ${comments}`
+    );
 
     try{
 
