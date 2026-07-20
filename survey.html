@@ -315,6 +315,8 @@ You are now ready to begin the screening task.
 
 <a class="menu-card"
 
+id="beginScreeningLink"
+
 href="screening-language.html">
 
 Begin Screening
@@ -342,6 +344,32 @@ if(!participantID){
 
 document.getElementById("participantID").textContent=participantID;
 
+function getScreeningPage(language){
+    if(language==="ASL"){
+        return "asl-screening.html";
+    }
+
+    if(language==="Auslan"){
+        return "auslan-screening.html";
+    }
+
+    return "screening-language.html";
+}
+
+function getScreeningButtonText(language){
+    if(language==="ASL"){
+        return "Begin American Sign Language (ASL) Screening";
+    }
+
+    if(language==="Auslan"){
+        return "Begin Australian Sign Language (Auslan) Screening";
+    }
+
+    return "Begin Screening";
+}
+
+const beginScreeningLink=document.getElementById("beginScreeningLink");
+
 const form=document.getElementById("surveyForm");
 const submitBtn=document.getElementById("submitBtn");
 
@@ -357,6 +385,11 @@ form.addEventListener("submit",async(e)=>{
     const payload=new FormData();
     const age = fd.get("age") || "";
     const language = fd.get("language") || "";
+    const screeningPage = getScreeningPage(language);
+
+    sessionStorage.setItem("selected_language",language);
+    sessionStorage.setItem("screening_page",screeningPage);
+
     const proficiency = fd.get("proficiency") || "";
     const experience = fd.get("experience") || "";
     const regular = fd.get("regular") || "";
@@ -388,6 +421,9 @@ form.addEventListener("submit",async(e)=>{
             mode:"no-cors",
             body:payload
         });
+
+        beginScreeningLink.href=screeningPage;
+        beginScreeningLink.textContent=getScreeningButtonText(language);
 
         document.getElementById("survey").style.display="none";
         document.getElementById("menu").style.display="block";
