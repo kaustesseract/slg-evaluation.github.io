@@ -199,7 +199,6 @@
         padding: 34px 18px 38px;
         border-radius: 34px;
       }
-
     }
   </style>
 </head>
@@ -237,7 +236,6 @@
       { file: "auslan_goodbye.mp4", label: "Video 2" }
     ];
 
-
     sessionStorage.setItem("selected_language", "Auslan");
     sessionStorage.setItem("screening_complete", "false");
 
@@ -247,22 +245,9 @@
     const video = document.getElementById("screening-video");
     const videoSource = document.getElementById("video-source");
     const videoCount = document.getElementById("video-count");
-    const actions = document.querySelector(".actions");
     const submitButton = form.querySelector(".submit-button");
+
     let currentVideoIndex = 0;
-
-    function showContinueToEvaluationButton() {
-      let continueEvaluationLink = document.getElementById("continue-evaluation");
-
-      if (!continueEvaluationLink) {
-        continueEvaluationLink = document.createElement("a");
-        continueEvaluationLink.className = "button";
-        continueEvaluationLink.id = "continue-evaluation";
-        continueEvaluationLink.href = "evaluation.html";
-        continueEvaluationLink.textContent = "Continue to Main Video Evaluation";
-        actions.appendChild(continueEvaluationLink);
-      }
-    }
 
     function getParticipantId() {
       const existingId = sessionStorage.getItem("participant_id");
@@ -289,18 +274,23 @@
       answerInput.focus();
     }
 
-    form.addEventListener("submit", async (event) => {
+    function sendScreeningResponse(payload) {
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: payload
+      }).catch((error) => {
+        console.error("Screening submission failed:", error);
+      });
+    }
+
+    form.addEventListener("submit", (event) => {
       event.preventDefault();
 
       const answer = answerInput.value.trim();
       if (!answer) {
         message.textContent = "Please enter your answer before submitting.";
         answerInput.focus();
-        return;
-      }
-
-      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-        message.textContent = "Submission is not connected yet. Add the Google Apps Script URL first.";
         return;
       }
 
@@ -311,28 +301,22 @@
       payload.append("video", videos[currentVideoIndex].file);
       payload.append("response", answer);
 
-      message.textContent = "Submitting...";
+      sendScreeningResponse(payload);
 
-      try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          body: payload
-        });
-        if (currentVideoIndex < videos.length - 1) {
-          currentVideoIndex += 1;
-          showCurrentVideo();
-          message.textContent = "Response submitted. Please answer the next video.";
-        } else {
-          message.textContent = "All screening responses submitted. Please continue to the main video evaluation task.";
-          form.reset();
-          sessionStorage.setItem("screening_complete", "true");
-          answerInput.disabled = true;
-          submitButton.disabled = true;
-          showContinueToEvaluationButton();
-        }
-      } catch (error) {
-        message.textContent = "Submission failed. Please try again.";
+      if (currentVideoIndex < videos.length - 1) {
+        currentVideoIndex += 1;
+        showCurrentVideo();
+        message.textContent = "Response submitted. Please answer the next video.";
+      } else {
+        message.textContent = "All screening responses submitted. Redirecting...";
+        sessionStorage.setItem("screening_complete", "true");
+        answerInput.disabled = true;
+        submitButton.disabled = true;
+        submitButton.textContent = "Screening Complete";
+
+        setTimeout(() => {
+          window.location.href = "screening-completed.html";
+        }, 500);
       }
     });
 
