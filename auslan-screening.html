@@ -248,10 +248,7 @@
       { file: "auslan_hello.mp4", label: "Video 1" },
       { file: "auslan_goodbye.mp4", label: "Video 2" }
     ];
-    sessionStorage.setItem("selected_language", "Auslan");
-    sessionStorage.setItem("screening_complete", "false");
-
-    const form = document.getElementById("screening-form");
+const form = document.getElementById("screening-form");
     const answerInput = document.getElementById("sign-answer");
     const message = document.getElementById("form-message");
     const video = document.getElementById("screening-video");
@@ -323,8 +320,6 @@ let currentVideoIndex = 0;
         } else {
           message.textContent = "All screening responses submitted. Please continue to the main video evaluation task.";
           form.reset();
-          sessionStorage.setItem("screening_complete", "true");
-          continueEvaluationLink.classList.remove("is-hidden");
         }
       } catch (error) {
         message.textContent = "Submission failed. Please try again.";
