@@ -43,7 +43,6 @@
 
     h1{
       margin:0 0 28px;
-      text-align:center;
       color:#003366;
       font-size:clamp(36px,5vw,64px);
       line-height:1.1;
@@ -65,23 +64,13 @@
     }
 
     .success{
-      text-align:center;
       color:green;
       font-weight:bold;
       margin-top:28px;
       font-size:24px;
     }
 
-    .warning{
-      text-align:center;
-      color:#9a3412;
-      font-weight:bold;
-      margin-top:28px;
-      font-size:22px;
-    }
-
     .ready{
-      text-align:center;
       color:#666;
       margin-top:26px;
       font-size:24px;
@@ -114,15 +103,6 @@
       outline:3px solid rgba(0,85,204,.25);
     }
 
-    .secondary{
-      background:#666;
-    }
-
-    .secondary:hover,
-    .secondary:focus{
-      background:#444;
-    }
-
     @media(max-width:720px){
       body{
         padding:16px;
@@ -141,7 +121,7 @@
 <body>
   <div class="container">
     <div class="content">
-      <h1 id="pageTitle">Screening Completed</h1>
+      <h1>Screening Completed</h1>
 
       <p class="participant">
         Participant ID
@@ -149,12 +129,12 @@
         <strong id="participantID">Loading...</strong>
       </p>
 
-      <p class="success" id="successMessage">✓ Your screening responses have been recorded successfully.</p>
+      <p class="success">✓ Your screening responses have been recorded successfully.</p>
 
-      <p class="ready" id="readyMessage">You are now ready to begin the main video evaluation task.</p>
+      <p class="ready">You are now ready to begin the main video evaluation task.</p>
 
-      <div class="menu-grid" id="buttonArea">
-        <a class="menu-card" id="mainButton" href="evaluation.html">Begin Main Video Evaluation</a>
+      <div class="menu-grid">
+        <a class="menu-card" id="evaluationLink" href="evaluation.html">Begin Main Video Evaluation</a>
       </div>
     </div>
   </div>
@@ -165,40 +145,16 @@
       sessionStorage.getItem("participantID") ||
       "Unknown";
 
-    const screeningComplete = sessionStorage.getItem("screening_complete");
     const selectedLanguage = sessionStorage.getItem("selected_language") || "";
 
-    const participantEl = document.getElementById("participantID");
-    const pageTitle = document.getElementById("pageTitle");
-    const successMessage = document.getElementById("successMessage");
-    const readyMessage = document.getElementById("readyMessage");
-    const mainButton = document.getElementById("mainButton");
+    document.getElementById("participantID").textContent = participantID;
 
-    participantEl.textContent = participantID;
+    const evaluationLink = document.getElementById("evaluationLink");
 
     if (selectedLanguage === "Auslan") {
-      mainButton.textContent = "Begin Australian Sign Language (Auslan) Main Video Evaluation";
+      evaluationLink.textContent = "Begin Australian Sign Language (Auslan) Main Video Evaluation";
     } else if (selectedLanguage === "ASL") {
-      mainButton.textContent = "Begin American Sign Language (ASL) Main Video Evaluation";
-    } else {
-      mainButton.textContent = "Begin Main Video Evaluation";
-    }
-
-    if (screeningComplete !== "true") {
-      pageTitle.textContent = "Screening Not Completed";
-      successMessage.className = "warning";
-      successMessage.textContent = "Screening has not been marked as completed in this browser session.";
-      readyMessage.textContent = "Please finish all screening videos first.";
-
-      mainButton.classList.add("secondary");
-
-      if (selectedLanguage === "Auslan") {
-        mainButton.href = "auslan-screening.html";
-        mainButton.textContent = "Return to Australian Sign Language (Auslan) Screening";
-      } else {
-        mainButton.href = "asl-screening.html";
-        mainButton.textContent = "Return to American Sign Language (ASL) Screening";
-      }
+      evaluationLink.textContent = "Begin American Sign Language (ASL) Main Video Evaluation";
     }
   </script>
 </body>
