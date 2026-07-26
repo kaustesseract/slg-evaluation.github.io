@@ -227,6 +227,7 @@
 
     <div class="actions">
       <a class="button" href="screening-language.html">Back to Language Selection</a>
+      <a class="button" id="continue-evaluation" href="evaluation.html" hidden>Continue to Main Video Evaluation</a>
     </div>
   </main>
 
@@ -237,12 +238,15 @@
       { file: "auslan_goodbye.mp4", label: "Video 2" }
     ];
 
+    sessionStorage.setItem("selected_language", "Auslan");
+
     const form = document.getElementById("screening-form");
     const answerInput = document.getElementById("sign-answer");
     const message = document.getElementById("form-message");
     const video = document.getElementById("screening-video");
     const videoSource = document.getElementById("video-source");
     const videoCount = document.getElementById("video-count");
+    const continueEvaluationLink = document.getElementById("continue-evaluation");
     let currentVideoIndex = 0;
 
     function getParticipantId() {
@@ -305,8 +309,9 @@
           showCurrentVideo();
           message.textContent = "Response submitted. Please answer the next video.";
         } else {
-          message.textContent = "All screening responses submitted. Thank you.";
+          message.textContent = "All screening responses submitted. Please continue to the main video evaluation task.";
           form.reset();
+          continueEvaluationLink.hidden = false;
         }
       } catch (error) {
         message.textContent = "Submission failed. Please try again.";
