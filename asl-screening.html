@@ -190,6 +190,11 @@
       font-weight: 800;
     }
 
+
+    [hidden] {
+      display: none !important;
+    }
+
     @media (max-width: 720px) {
       body {
         padding: 16px;
@@ -238,7 +243,8 @@
       { file: "asl_goodbye.mp4", label: "Video 2" }
     ];
 
-    sessionStorage.setItem("selected_language", "ASL");
+        sessionStorage.setItem("selected_language", "ASL");
+    sessionStorage.setItem("screening_complete", "false");
 
     const form = document.getElementById("screening-form");
     const answerInput = document.getElementById("sign-answer");
@@ -311,6 +317,7 @@
         } else {
           message.textContent = "All screening responses submitted. Please continue to the main video evaluation task.";
           form.reset();
+          sessionStorage.setItem("screening_complete", "true");
           continueEvaluationLink.hidden = false;
         }
       } catch (error) {
