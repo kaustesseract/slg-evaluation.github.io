@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Part C: Main Video Evaluation Task</title>
+  <style>
+    :root {
+      --ink: #171717;
+      --muted: #3f4652;
+      --panel: #fff3bf;
+      --panel-deep: #ffe174;
+      --purple: #ff4cff;
+      --blue: #0f61b9;
+      --blue-dark: #00458a;
+      --white: #ffffff;
+      --border: #d6b849;
+      --line: #d9dee7;
+      --green: #0f7a25;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(20, 20, 20, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 20, 20, 0.04) 1px, transparent 1px),
+        #ffffff;
+      background-size: 16px 16px;
+      padding: 28px;
+    }
+
+    .page {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+    }
+
+    .evaluation-panel {
+      padding: 42px 32px 50px;
+      border: 1px solid var(--border);
+      border-radius: 56px;
+      background: linear-gradient(160deg, var(--panel), var(--panel-deep));
+      box-shadow: 0 20px 60px rgba(42, 84, 140, 0.14);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      color: var(--purple);
+      font-size: clamp(30px, 4.2vw, 48px);
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 22px);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .instruction {
+      width: min(820px, 100%);
+      margin: 0 auto 28px;
+      padding: 16px 20px;
+      border-left: 6px solid var(--blue);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.86);
+      color: var(--muted);
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .video-wrap {
+      width: min(520px, 100%);
+      margin: 0 auto 14px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 16px 34px rgba(70, 55, 20, 0.16);
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      max-height: 420px;
+      border-radius: 8px;
+      background: #111111;
+    }
+
+    .video-count {
+      margin: 0 0 16px;
+      color: #465266;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .speed-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    select {
+      min-height: 38px;
+      padding: 6px 10px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      font-weight: 800;
+    }
+
+    form {
+      width: min(820px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+      text-align: left;
+    }
+
+    .question-card {
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.94);
+      box-shadow: 0 8px 22px rgba(24, 44, 79, 0.06);
+    }
+
+    label,
+    .question-title {
+      display: block;
+      margin: 0 0 10px;
+      color: #111111;
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .scale-help {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 14px;
+      border: 2px solid #111111;
+      border-radius: 8px;
+      background: var(--white);
+      color: #111111;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    input[type="range"]:focus {
+      outline: 3px solid rgba(15, 97, 185, 0.24);
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    .rating-value {
+      min-width: 48px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: var(--white);
+      text-align: center;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    button {
+      min-height: 50px;
+      padding: 0 26px;
+      border: 2px solid var(--blue);
+      border-radius: 8px;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.12);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover,
+    button:focus {
+      outline: 3px solid rgba(15, 97, 185, 0.22);
+      background: var(--blue-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .message {
+      min-height: 28px;
+      margin: 4px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .complete { color: var(--green); }
+    .hidden { display: none; }
+
+    @media (max-width: 720px) {
+      body { padding: 16px; }
+      .evaluation-panel {
+        padding: 34px 18px 38px;
+        border-radius: 34px;
+      }
+      .slider-row { grid-template-columns: 1fr; }
+      .rating-value { justify-self: center; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="evaluation-panel">
+      <h1>Part C: Main Video Evaluation Task</h1>
+      <p class="subtitle" id="language-title">Main fingerspelling video evaluation</p>
+
+      <div class="instruction">
+        Watch each short rendered 3D fingerspelling video. For every video, type the word you think was fingerspelled and use the 0-10 sliders to rate recognition, naturalness, and clarity.
+      </div>
+
+      <div id="task-area">
+        <div class="video-wrap">
+          <video id="evaluation-video" controls playsinline preload="metadata">
+            <source id="video-source" src="" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
+        <p class="video-count" id="video-count">Video 1 of 2</p>
+
+        <div class="speed-row">
+          <label for="playback-speed" style="margin:0;">Playback speed</label>
+          <select id="playback-speed">
+            <option value="0.5">0.5x</option>
+            <option value="0.75">0.75x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+          </select>
+        </div>
+
+        <form id="evaluation-form">
+          <div class="question-card">
+            <label for="word-answer">C1.1 What word do you think was fingerspelled in this video?</label>
+            <input id="word-answer" name="word-answer" type="text" autocomplete="off" placeholder="Enter the fingerspelled word here">
+          </div>
+
+          <div class="question-card">
+            <p class="question-title">C1.2 How easy was it to recognise the fingerspelled word?</p>
+            <p class="scale-help">0 = Very difficult to recognise, 10 = Very easy to recognise</p>
+            <div class="slider-row">
+              <input id="recognition-rating" name="recognition-rating" type="range" min="0" max="10" step="1" value="5">
+              <output class="rating-value" id="recognition-value" for="recognition-rating">5</output>
+            </div>
+            <div class="scale-labels"><span>0</span><span>10</span></div>
+          </div>
+
+          <div class="question-card">
+            <p class="question-title">C1.3 How natural did the signing motion look?</p>
+            <p class="scale-help">0 = Very unnatural, 10 = Very natural</p>
+            <div class="slider-row">
+              <input id="naturalness-rating" name="naturalness-rating" type="range" min="0" max="10" step="1" value="5">
+              <output class="rating-value" id="naturalness-value" for="naturalness-rating">5</output>
+            </div>
+            <div class="scale-labels"><span>0</span><span>10</span></div>
+          </div>
+
+          <div class="question-card">
+            <p class="question-title">C1.4 How clearly did the video represent the intended word?</p>
+            <p class="scale-help">0 = Not clear at all, 10 = Very clear</p>
+            <div class="slider-row">
+              <input id="clarity-rating" name="clarity-rating" type="range" min="0" max="10" step="1" value="5">
+              <output class="rating-value" id="clarity-value" for="clarity-rating">5</output>
+            </div>
+            <div class="scale-labels"><span>0</span><span>10</span></div>
+          </div>
+
+          <div class="question-card">
+            <label for="comment">C1.5 Optional comment. Was there anything that made this video easy or difficult to understand?</label>
+            <textarea id="comment" name="comment" placeholder="Optional"></textarea>
+          </div>
+
+          <div class="actions">
+            <button id="submit-button" type="submit">Submit and Continue</button>
+          </div>
+
+          <p class="message" id="form-message" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div id="complete-area" class="hidden">
+        <p class="message complete">All Part C video evaluation responses have been submitted. Thank you.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDVZqyogK4lpCevhRALceTpyXuHDV6m3b1phyiRmlalIkYNv28wudxF6PMfZO03BHD/exec";
+
+    const evaluationVideosByLanguage = {
+      ASL: [
+        { file: "asl_eval_1.mp4", label: "Video 1" },
+        { file: "asl_eval_2.mp4", label: "Video 2" }
+      ],
+      Auslan: [
+        { file: "auslan_eval_1.mp4", label: "Video 1" },
+        { file: "auslan_eval_2.mp4", label: "Video 2" }
+      ]
+    };
+
+    const languageNames = {
+      ASL: "American Sign Language (ASL)",
+      Auslan: "Australian Sign Language (Auslan)"
+    };
+
+    const form = document.getElementById("evaluation-form");
+    const message = document.getElementById("form-message");
+    const video = document.getElementById("evaluation-video");
+    const videoSource = document.getElementById("video-source");
+    const videoCount = document.getElementById("video-count");
+    const languageTitle = document.getElementById("language-title");
+    const playbackSpeed = document.getElementById("playback-speed");
+    const submitButton = document.getElementById("submit-button");
+    const taskArea = document.getElementById("task-area");
+    const completeArea = document.getElementById("complete-area");
+
+    const wordAnswer = document.getElementById("word-answer");
+    const commentInput = document.getElementById("comment");
+
+    const recognitionSlider = document.getElementById("recognition-rating");
+    const naturalnessSlider = document.getElementById("naturalness-rating");
+    const claritySlider = document.getElementById("clarity-rating");
+
+    const recognitionValue = document.getElementById("recognition-value");
+    const naturalnessValue = document.getElementById("naturalness-value");
+    const clarityValue = document.getElementById("clarity-value");
+
+    let selectedLanguage = sessionStorage.getItem("selected_language") || "ASL";
+    if (!evaluationVideosByLanguage[selectedLanguage]) {
+      selectedLanguage = "ASL";
+    }
+
+    const videos = evaluationVideosByLanguage[selectedLanguage];
+    let currentVideoIndex = 0;
+
+    let viewStartTime = Date.now();
+    let playCount = 0;
+    let pauseCount = 0;
+    let replayCount = 0;
+    let speedChangeCount = 0;
+    let lastVideoTime = 0;
+
+    function getParticipantId() {
+      const existingId = sessionStorage.getItem("participant_id");
+      if (existingId) {
+        return existingId;
+      }
+
+      const newId = crypto.randomUUID
+        ? crypto.randomUUID()
+        : `participant-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+      sessionStorage.setItem("participant_id", newId);
+      return newId;
+    }
+
+    function updateSliderValue(slider, output) {
+      output.textContent = slider.value;
+    }
+
+    recognitionSlider.addEventListener("input", () => updateSliderValue(recognitionSlider, recognitionValue));
+    naturalnessSlider.addEventListener("input", () => updateSliderValue(naturalnessSlider, naturalnessValue));
+    claritySlider.addEventListener("input", () => updateSliderValue(claritySlider, clarityValue));
+
+    video.addEventListener("play", () => { playCount += 1; });
+    video.addEventListener("pause", () => {
+      if (!video.ended) { pauseCount += 1; }
+    });
+    video.addEventListener("timeupdate", () => {
+      if (video.currentTime < lastVideoTime - 1) { replayCount += 1; }
+      lastVideoTime = video.currentTime;
+    });
+    playbackSpeed.addEventListener("change", () => {
+      video.playbackRate = Number(playbackSpeed.value);
+      speedChangeCount += 1;
+    });
+
+    function resetInteractionTracking() {
+      viewStartTime = Date.now();
+      playCount = 0;
+      pauseCount = 0;
+      replayCount = 0;
+      speedChangeCount = 0;
+      lastVideoTime = 0;
+      playbackSpeed.value = "1";
+      video.playbackRate = 1;
+    }
+
+    function showCurrentVideo() {
+      const currentVideo = videos[currentVideoIndex];
+
+      video.pause();
+      videoSource.src = currentVideo.file;
+      video.load();
+
+      videoCount.textContent = `Video ${currentVideoIndex + 1} of ${videos.length}`;
+      languageTitle.textContent = `${languageNames[selectedLanguage]} main video evaluation`;
+
+      wordAnswer.value = "";
+      commentInput.value = "";
+      recognitionSlider.value = "5";
+      naturalnessSlider.value = "5";
+      claritySlider.value = "5";
+      updateSliderValue(recognitionSlider, recognitionValue);
+      updateSliderValue(naturalnessSlider, naturalnessValue);
+      updateSliderValue(claritySlider, clarityValue);
+
+      message.textContent = "";
+      submitButton.textContent = currentVideoIndex === videos.length - 1
+        ? "Submit Final Evaluation Response"
+        : "Submit and Continue";
+
+      resetInteractionTracking();
+      wordAnswer.focus();
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const currentVideo = videos[currentVideoIndex];
+      const answer = wordAnswer.value.trim();
+      const comment = commentInput.value.trim();
+      const timeSpentSeconds = Math.round((Date.now() - viewStartTime) / 1000);
+
+      const payload = new FormData();
+      payload.append("action", "evaluation");
+      payload.append("section", "evaluation");
+      payload.append("participant_id", getParticipantId());
+      payload.append("participantID", getParticipantId());
+      payload.append("language", languageNames[selectedLanguage]);
+      payload.append("video", currentVideo.file);
+      payload.append("video_label", currentVideo.label);
+      payload.append("word_answer", answer);
+      payload.append("recognition_rating", recognitionSlider.value);
+      payload.append("naturalness_rating", naturalnessSlider.value);
+      payload.append("clarity_rating", claritySlider.value);
+      payload.append("comment", comment);
+      payload.append("play_count", playCount);
+      payload.append("pause_count", pauseCount);
+      payload.append("replay_count", replayCount);
+      payload.append("speed_change_count", speedChangeCount);
+      payload.append("time_spent_seconds", timeSpentSeconds);
+
+      payload.append("question", "Part C: Main Video Evaluation Task");
+      payload.append(
+        "response",
+        `Word: ${answer} | Recognition: ${recognitionSlider.value} | Naturalness: ${naturalnessSlider.value} | Clarity: ${claritySlider.value} | Comment: ${comment}`
+      );
+
+      message.textContent = "Submitting...";
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: payload
+        });
+
+        if (currentVideoIndex < videos.length - 1) {
+          currentVideoIndex += 1;
+          showCurrentVideo();
+          message.textContent = "Response submitted. Please evaluate the next video.";
+        } else {
+          taskArea.classList.add("hidden");
+          completeArea.classList.remove("hidden");
+        }
+      } catch (error) {
+        message.textContent = "Submission failed. Please try again.";
+      }
+    });
+
+    showCurrentVideo();
+  </script>
+</body>
+</html>
