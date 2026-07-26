@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Screening Completed</title>
+  <style>
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:#eef2f7;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:28px;
+    }
+
+    .container{
+      width:min(1100px,100%);
+      background:white;
+      padding:54px 40px;
+      border-radius:18px;
+      box-shadow:0 8px 25px rgba(0,0,0,.12);
+      position:relative;
+      overflow:hidden;
+      text-align:center;
+    }
+
+    .container::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:url("Arms_of_Monash_University.svg") center center no-repeat;
+      background-size:760px;
+      opacity:.09;
+      pointer-events:none;
+    }
+
+    .content{
+      position:relative;
+      z-index:1;
+    }
+
+    h1{
+      margin:0 0 28px;
+      text-align:center;
+      color:#003366;
+      font-size:clamp(36px,5vw,64px);
+      line-height:1.1;
+    }
+
+    .participant{
+      color:#666;
+      margin-top:25px;
+      font-size:22px;
+      font-weight:700;
+    }
+
+    .participant strong{
+      display:inline-block;
+      margin-top:22px;
+      color:#666;
+      font-size:20px;
+      overflow-wrap:anywhere;
+    }
+
+    .success{
+      text-align:center;
+      color:green;
+      font-weight:bold;
+      margin-top:28px;
+      font-size:24px;
+    }
+
+    .ready{
+      text-align:center;
+      color:#666;
+      margin-top:26px;
+      font-size:24px;
+      line-height:1.4;
+      font-weight:700;
+    }
+
+    .menu-grid{
+      display:grid;
+      gap:20px;
+      margin-top:44px;
+    }
+
+    .menu-card{
+      display:block;
+      text-align:center;
+      text-decoration:none;
+      background:#0055cc;
+      color:white;
+      padding:20px;
+      border-radius:10px;
+      font-size:28px;
+      font-weight:800;
+      transition:.2s;
+    }
+
+    .menu-card:hover,
+    .menu-card:focus{
+      background:#003d99;
+      outline:3px solid rgba(0,85,204,.25);
+    }
+
+    @media(max-width:720px){
+      body{
+        padding:16px;
+      }
+
+      .container{
+        padding:42px 20px;
+      }
+
+      .menu-card{
+        font-size:22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="content">
+      <h1>Screening Completed</h1>
+
+      <p class="participant">
+        Participant ID
+        <br>
+        <strong id="participantID"></strong>
+      </p>
+
+      <p class="success">✓ Your screening responses have been recorded successfully.</p>
+
+      <p class="ready">You are now ready to begin the main video evaluation task.</p>
+
+      <div class="menu-grid">
+        <a class="menu-card" id="evaluationLink" href="evaluation.html">Begin Main Video Evaluation</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const participantID =
+      sessionStorage.getItem("participant_id") ||
+      sessionStorage.getItem("participantID") ||
+      "Unknown";
+
+    const screeningComplete = sessionStorage.getItem("screening_complete");
+    const selectedLanguage = sessionStorage.getItem("selected_language") || "";
+
+    if (screeningComplete !== "true") {
+      if (selectedLanguage === "Auslan") {
+        window.location.href = "auslan-screening.html";
+      } else {
+        window.location.href = "asl-screening.html";
+      }
+    }
+
+    document.getElementById("participantID").textContent = participantID;
+
+    const evaluationLink = document.getElementById("evaluationLink");
+
+    if (selectedLanguage === "Auslan") {
+      evaluationLink.textContent = "Begin Australian Sign Language (Auslan) Main Video Evaluation";
+    } else if (selectedLanguage === "ASL") {
+      evaluationLink.textContent = "Begin American Sign Language (ASL) Main Video Evaluation";
+    }
+  </script>
+</body>
+</html>
