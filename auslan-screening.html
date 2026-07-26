@@ -195,6 +195,12 @@
       display: none !important;
     }
 
+
+    .is-hidden {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
     @media (max-width: 720px) {
       body {
         padding: 16px;
@@ -232,7 +238,7 @@
 
     <div class="actions">
       <a class="button" href="screening-language.html">Back to Language Selection</a>
-      <a class="button" id="continue-evaluation" href="evaluation.html" hidden>Continue to Main Video Evaluation</a>
+      <a class="button is-hidden" id="continue-evaluation" href="evaluation.html">Continue to Main Video Evaluation</a>
     </div>
   </main>
 
@@ -242,18 +248,14 @@
       { file: "auslan_hello.mp4", label: "Video 1" },
       { file: "auslan_goodbye.mp4", label: "Video 2" }
     ];
-
-        sessionStorage.setItem("selected_language", "Auslan");
-    sessionStorage.setItem("screening_complete", "false");
-
-    const form = document.getElementById("screening-form");
+const form = document.getElementById("screening-form");
     const answerInput = document.getElementById("sign-answer");
     const message = document.getElementById("form-message");
     const video = document.getElementById("screening-video");
     const videoSource = document.getElementById("video-source");
     const videoCount = document.getElementById("video-count");
     const continueEvaluationLink = document.getElementById("continue-evaluation");
-    let currentVideoIndex = 0;
+let currentVideoIndex = 0;
 
     function getParticipantId() {
       const existingId = sessionStorage.getItem("participant_id");
@@ -277,7 +279,7 @@
       videoCount.textContent = `Video ${currentVideoIndex + 1} of ${videos.length}`;
       answerInput.value = "";
       message.textContent = "";
-      continueEvaluationLink.hidden = true;
+      continueEvaluationLink.classList.add("is-hidden");
       answerInput.focus();
     }
 
@@ -314,13 +316,10 @@
         if (currentVideoIndex < videos.length - 1) {
           currentVideoIndex += 1;
           showCurrentVideo();
-          continueEvaluationLink.hidden = true;
-          message.textContent = "Response submitted. Please answer the next video.";
+              message.textContent = "Response submitted. Please answer the next video.";
         } else {
           message.textContent = "All screening responses submitted. Please continue to the main video evaluation task.";
           form.reset();
-          sessionStorage.setItem("screening_complete", "true");
-          continueEvaluationLink.hidden = false;
         }
       } catch (error) {
         message.textContent = "Submission failed. Please try again.";
