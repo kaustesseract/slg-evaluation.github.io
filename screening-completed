@@ -72,6 +72,14 @@
       font-size:24px;
     }
 
+    .warning{
+      text-align:center;
+      color:#9a3412;
+      font-weight:bold;
+      margin-top:28px;
+      font-size:22px;
+    }
+
     .ready{
       text-align:center;
       color:#666;
@@ -106,6 +114,15 @@
       outline:3px solid rgba(0,85,204,.25);
     }
 
+    .secondary{
+      background:#666;
+    }
+
+    .secondary:hover,
+    .secondary:focus{
+      background:#444;
+    }
+
     @media(max-width:720px){
       body{
         padding:16px;
@@ -124,20 +141,20 @@
 <body>
   <div class="container">
     <div class="content">
-      <h1>Screening Completed</h1>
+      <h1 id="pageTitle">Screening Completed</h1>
 
       <p class="participant">
         Participant ID
         <br>
-        <strong id="participantID"></strong>
+        <strong id="participantID">Loading...</strong>
       </p>
 
-      <p class="success">✓ Your screening responses have been recorded successfully.</p>
+      <p class="success" id="successMessage">✓ Your screening responses have been recorded successfully.</p>
 
-      <p class="ready">You are now ready to begin the main video evaluation task.</p>
+      <p class="ready" id="readyMessage">You are now ready to begin the main video evaluation task.</p>
 
-      <div class="menu-grid">
-        <a class="menu-card" id="evaluationLink" href="evaluation.html">Begin Main Video Evaluation</a>
+      <div class="menu-grid" id="buttonArea">
+        <a class="menu-card" id="mainButton" href="evaluation.html">Begin Main Video Evaluation</a>
       </div>
     </div>
   </div>
@@ -151,22 +168,37 @@
     const screeningComplete = sessionStorage.getItem("screening_complete");
     const selectedLanguage = sessionStorage.getItem("selected_language") || "";
 
-    if (screeningComplete !== "true") {
-      if (selectedLanguage === "Auslan") {
-        window.location.href = "auslan-screening.html";
-      } else {
-        window.location.href = "asl-screening.html";
-      }
-    }
+    const participantEl = document.getElementById("participantID");
+    const pageTitle = document.getElementById("pageTitle");
+    const successMessage = document.getElementById("successMessage");
+    const readyMessage = document.getElementById("readyMessage");
+    const mainButton = document.getElementById("mainButton");
 
-    document.getElementById("participantID").textContent = participantID;
-
-    const evaluationLink = document.getElementById("evaluationLink");
+    participantEl.textContent = participantID;
 
     if (selectedLanguage === "Auslan") {
-      evaluationLink.textContent = "Begin Australian Sign Language (Auslan) Main Video Evaluation";
+      mainButton.textContent = "Begin Australian Sign Language (Auslan) Main Video Evaluation";
     } else if (selectedLanguage === "ASL") {
-      evaluationLink.textContent = "Begin American Sign Language (ASL) Main Video Evaluation";
+      mainButton.textContent = "Begin American Sign Language (ASL) Main Video Evaluation";
+    } else {
+      mainButton.textContent = "Begin Main Video Evaluation";
+    }
+
+    if (screeningComplete !== "true") {
+      pageTitle.textContent = "Screening Not Completed";
+      successMessage.className = "warning";
+      successMessage.textContent = "Screening has not been marked as completed in this browser session.";
+      readyMessage.textContent = "Please finish all screening videos first.";
+
+      mainButton.classList.add("secondary");
+
+      if (selectedLanguage === "Auslan") {
+        mainButton.href = "auslan-screening.html";
+        mainButton.textContent = "Return to Australian Sign Language (Auslan) Screening";
+      } else {
+        mainButton.href = "asl-screening.html";
+        mainButton.textContent = "Return to American Sign Language (ASL) Screening";
+      }
     }
   </script>
 </body>
