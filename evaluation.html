@@ -408,12 +408,12 @@
 
     let firstPlayPosition = "";
     let lastStopPosition = "";
-    let activeViewStart = null;
+    let activeSegmentStart = null;
     let seekFromPosition = null;
 
     let viewedSegments = [];
     let seekEvents = [];
-    let speedHistory = [];
+    let speedEvents = [];
     let interactionEvents = [];
 
     function getParticipantId() {
@@ -438,7 +438,6 @@
       if (!Number.isFinite(value)) {
         return "";
       }
-
       return Math.round(value * 100) / 100;
     }
 
@@ -446,26 +445,38 @@
       return Number.isFinite(video.duration) ? roundTime(video.duration) : "";
     }
 
+    function getPageTimeMs() {
+      return Date.now() - viewStartTime;
+    }
+
     function recordInteraction(type, extra = {}) {
       interactionEvents.push({
+        event_index: interactionEvents.length + 1,
         type,
         video_time: roundTime(video.currentTime),
-        page_time_ms: Date.now() - viewStartTime,
+        page_time_ms: getPageTimeMs(),
         playback_speed: Number(video.playbackRate),
         ...extra
       });
     }
 
+    function startViewedSegment() {
+      if (activeSegmentStart === null) {
+        activeSegmentStart = video.currentTime;
+      }
+    }
+
     function closeViewedSegment(reason) {
-      if (activeViewStart === null) {
+      if (activeSegmentStart === null) {
         return;
       }
 
-      const start = roundTime(activeViewStart);
+      const start = roundTime(activeSegmentStart);
       const end = roundTime(video.currentTime);
 
       if (start !== "" && end !== "" && end > start) {
         viewedSegments.push({
+          segment_index: viewedSegments.length + 1,
           start,
           end,
           duration: roundTime(end - start),
@@ -476,22 +487,14 @@
         lastStopPosition = end;
       }
 
-      activeViewStart = null;
-    }
-
-    function startViewedSegment() {
-      if (activeViewStart === null) {
-        activeViewStart = video.currentTime;
-      }
+      activeSegmentStart = null;
     }
 
     function getTotalViewedSeconds() {
-      return roundTime(
-        viewedSegments.reduce((total, segment) => {
-          const duration = Number(segment.duration);
-          return total + (Number.isFinite(duration) ? duration : 0);
-        }, 0)
-      );
+      return roundTime(viewedSegments.reduce((total, segment) => {
+        const duration = Number(segment.duration);
+        return total + (Number.isFinite(duration) ? duration : 0);
+      }, 0));
     }
 
     function getUniqueViewedSeconds() {
@@ -507,7 +510,6 @@
       const merged = [];
       for (const range of ranges) {
         const previous = merged[merged.length - 1];
-
         if (!previous || range[0] > previous[1]) {
           merged.push([...range]);
         } else {
@@ -515,9 +517,7 @@
         }
       }
 
-      return roundTime(
-        merged.reduce((total, range) => total + (range[1] - range[0]), 0)
-      );
+      return roundTime(merged.reduce((total, range) => total + (range[1] - range[0]), 0));
     }
 
     recognitionSlider.addEventListener("input", () => updateSliderValue(recognitionSlider, recognitionValue));
@@ -526,11 +526,9 @@
 
     video.addEventListener("play", () => {
       playCount += 1;
-
       if (firstPlayPosition === "") {
         firstPlayPosition = roundTime(video.currentTime);
       }
-
       startViewedSegment();
       recordInteraction("play");
     });
@@ -564,16 +562,14 @@
         }
 
         seekEvents.push({
+          event_index: seekEvents.length + 1,
           from: seekFromPosition,
           to: seekToPosition,
-          page_time_ms: Date.now() - viewStartTime,
+          page_time_ms: getPageTimeMs(),
           playback_speed: Number(video.playbackRate)
         });
 
-        recordInteraction("seeked", {
-          from: seekFromPosition,
-          to: seekToPosition
-        });
+        recordInteraction("seeked", { from: seekFromPosition, to: seekToPosition });
       }
 
       seekFromPosition = null;
@@ -590,10 +586,11 @@
       video.playbackRate = newSpeed;
       speedChangeCount += 1;
 
-      speedHistory.push({
+      speedEvents.push({
+        event_index: speedEvents.length + 1,
         speed: newSpeed,
         video_time: roundTime(video.currentTime),
-        page_time_ms: Date.now() - viewStartTime
+        page_time_ms: getPageTimeMs()
       });
 
       recordInteraction("speed_change", { speed: newSpeed });
@@ -605,27 +602,23 @@
 
     function resetInteractionTracking() {
       viewStartTime = Date.now();
-
       playCount = 0;
       pauseCount = 0;
       seekCount = 0;
       replayCount = 0;
       speedChangeCount = 0;
-
       firstPlayPosition = "";
       lastStopPosition = "";
-      activeViewStart = null;
+      activeSegmentStart = null;
       seekFromPosition = null;
-
       viewedSegments = [];
       seekEvents = [];
-      speedHistory = [];
+      speedEvents = [];
       interactionEvents = [];
-
       playbackSpeed.value = "1";
       video.playbackRate = 1;
-
-      speedHistory.push({
+      speedEvents.push({
+        event_index: 1,
         speed: 1,
         video_time: 0,
         page_time_ms: 0
@@ -634,7 +627,6 @@
 
     function showCurrentVideo() {
       const currentVideo = videos[currentVideoIndex];
-
       video.pause();
       videoSource.src = currentVideo.file;
       video.load();
@@ -647,7 +639,6 @@
       recognitionSlider.value = "5";
       naturalnessSlider.value = "5";
       claritySlider.value = "5";
-
       updateSliderValue(recognitionSlider, recognitionValue);
       updateSliderValue(naturalnessSlider, naturalnessValue);
       updateSliderValue(claritySlider, clarityValue);
@@ -662,9 +653,7 @@
       wordAnswer.focus();
     }
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
+    function buildEvaluationPayload() {
       const currentVideo = videos[currentVideoIndex];
       const answer = wordAnswer.value.trim();
       const comment = commentInput.value.trim();
@@ -675,60 +664,64 @@
 
       const timeSpentSeconds = Math.round((Date.now() - viewStartTime) / 1000);
 
-      const payload = new FormData();
-      payload.append("action", "evaluation");
-      payload.append("section", "evaluation");
-      payload.append("part", "Part C");
-      payload.append("interaction_schema_version", "v3");
+      return {
+        action: "evaluation",
+        section: "evaluation",
+        part: "Part C",
+        interaction_schema_version: "v4_normalized",
+        participant_id: getParticipantId(),
+        participantID: getParticipantId(),
+        language: languageNames[selectedLanguage],
+        selected_language_code: selectedLanguage,
+        video: currentVideo.file,
+        video_label: currentVideo.label,
+        word_answer: answer,
+        recognition_rating: recognitionSlider.value,
+        naturalness_rating: naturalnessSlider.value,
+        clarity_rating: claritySlider.value,
+        comment: comment,
+        play_count: String(playCount),
+        pause_count: String(pauseCount),
+        seek_count: String(seekCount),
+        replay_count: String(replayCount),
+        speed_change_count: String(speedChangeCount),
+        time_spent_seconds: String(timeSpentSeconds),
+        playback_speed_at_submit: String(video.playbackRate),
+        video_duration_seconds: String(getVideoDuration()),
+        first_play_position_seconds: String(firstPlayPosition),
+        last_stop_position_seconds: String(lastStopPosition),
+        total_viewed_seconds: String(getTotalViewedSeconds()),
+        unique_viewed_seconds: String(getUniqueViewedSeconds()),
+        viewed_segments: viewedSegments,
+        seek_events: seekEvents,
+        speed_events: speedEvents,
+        interaction_events: interactionEvents,
+        viewed_segments_json: JSON.stringify(viewedSegments),
+        seek_events_json: JSON.stringify(seekEvents),
+        speed_history_json: JSON.stringify(speedEvents),
+        interaction_count: String(interactionEvents.length),
+        interaction_events_json: JSON.stringify(interactionEvents),
+        question: "Main Video Evaluation Task",
+        response: `Word: ${answer} | Recognition: ${recognitionSlider.value} | Naturalness: ${naturalnessSlider.value} | Clarity: ${claritySlider.value} | Comment: ${comment}`
+      };
+    }
 
-      payload.append("participant_id", getParticipantId());
-      payload.append("participantID", getParticipantId());
-      payload.append("language", languageNames[selectedLanguage]);
-      payload.append("video", currentVideo.file);
-      payload.append("video_label", currentVideo.label);
+    async function sendEvaluationPayload(data) {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(data)
+      });
+    }
 
-      payload.append("word_answer", answer);
-      payload.append("recognition_rating", recognitionSlider.value);
-      payload.append("naturalness_rating", naturalnessSlider.value);
-      payload.append("clarity_rating", claritySlider.value);
-      payload.append("comment", comment);
-
-      payload.append("play_count", String(playCount));
-      payload.append("pause_count", String(pauseCount));
-      payload.append("seek_count", String(seekCount));
-      payload.append("replay_count", String(replayCount));
-      payload.append("speed_change_count", String(speedChangeCount));
-      payload.append("time_spent_seconds", String(timeSpentSeconds));
-
-      payload.append("playback_speed_at_submit", String(video.playbackRate));
-      payload.append("video_duration_seconds", String(getVideoDuration()));
-      payload.append("first_play_position_seconds", String(firstPlayPosition));
-      payload.append("last_stop_position_seconds", String(lastStopPosition));
-      payload.append("total_viewed_seconds", String(getTotalViewedSeconds()));
-      payload.append("unique_viewed_seconds", String(getUniqueViewedSeconds()));
-
-      payload.append("viewed_segments_json", JSON.stringify(viewedSegments));
-      payload.append("seek_events_json", JSON.stringify(seekEvents));
-      payload.append("speed_history_json", JSON.stringify(speedHistory));
-      payload.append("interaction_count", String(interactionEvents.length));
-      payload.append("interaction_events_json", JSON.stringify(interactionEvents));
-
-      payload.append("question", "Main Video Evaluation Task");
-      payload.append(
-        "response",
-        `Word: ${answer} | Recognition: ${recognitionSlider.value} | Naturalness: ${naturalnessSlider.value} | Clarity: ${claritySlider.value} | Comment: ${comment}`
-      );
-
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const data = buildEvaluationPayload();
       message.textContent = "Submitting...";
       submitButton.disabled = true;
 
       try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          body: payload
-        });
-
+        await sendEvaluationPayload(data);
         if (currentVideoIndex < videos.length - 1) {
           currentVideoIndex += 1;
           showCurrentVideo();
