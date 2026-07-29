@@ -402,12 +402,13 @@
     let viewStartTime = Date.now();
     let playCount = 0;
     let pauseCount = 0;
+    let seekCount = 0;
     let replayCount = 0;
     let speedChangeCount = 0;
 
     let firstPlayPosition = "";
     let lastStopPosition = "";
-    let previousTimePosition = null;
+    let activeViewStart = null;
     let seekFromPosition = null;
 
     let viewedSegments = [];
@@ -437,6 +438,7 @@
       if (!Number.isFinite(value)) {
         return "";
       }
+
       return Math.round(value * 100) / 100;
     }
 
@@ -446,7 +448,7 @@
 
     function recordInteraction(type, extra = {}) {
       interactionEvents.push({
-        type: type,
+        type,
         video_time: roundTime(video.currentTime),
         page_time_ms: Date.now() - viewStartTime,
         playback_speed: Number(video.playbackRate),
@@ -454,27 +456,33 @@
       });
     }
 
-    function addViewedSegment(start, end, reason) {
-      const startPosition = roundTime(start);
-      const endPosition = roundTime(end);
-
-      if (startPosition === "" || endPosition === "") {
+    function closeViewedSegment(reason) {
+      if (activeViewStart === null) {
         return;
       }
 
-      if (endPosition <= startPosition) {
-        return;
+      const start = roundTime(activeViewStart);
+      const end = roundTime(video.currentTime);
+
+      if (start !== "" && end !== "" && end > start) {
+        viewedSegments.push({
+          start,
+          end,
+          duration: roundTime(end - start),
+          playback_speed: Number(video.playbackRate),
+          reason
+        });
+
+        lastStopPosition = end;
       }
 
-      viewedSegments.push({
-        start: startPosition,
-        end: endPosition,
-        duration: roundTime(endPosition - startPosition),
-        playback_speed: Number(video.playbackRate),
-        reason: reason
-      });
+      activeViewStart = null;
+    }
 
-      lastStopPosition = endPosition;
+    function startViewedSegment() {
+      if (activeViewStart === null) {
+        activeViewStart = video.currentTime;
+      }
     }
 
     function getTotalViewedSeconds() {
@@ -498,11 +506,12 @@
 
       const merged = [];
       for (const range of ranges) {
-        const last = merged[merged.length - 1];
-        if (!last || range[0] > last[1]) {
+        const previous = merged[merged.length - 1];
+
+        if (!previous || range[0] > previous[1]) {
           merged.push([...range]);
         } else {
-          last[1] = Math.max(last[1], range[1]);
+          previous[1] = Math.max(previous[1], range[1]);
         }
       }
 
@@ -522,35 +531,32 @@
         firstPlayPosition = roundTime(video.currentTime);
       }
 
-      previousTimePosition = video.currentTime;
+      startViewedSegment();
       recordInteraction("play");
     });
 
     video.addEventListener("pause", () => {
       if (!video.ended) {
         pauseCount += 1;
-        previousTimePosition = null;
-        lastStopPosition = roundTime(video.currentTime);
+        closeViewedSegment("pause");
         recordInteraction("pause");
       }
     });
 
     video.addEventListener("ended", () => {
-      previousTimePosition = null;
-      lastStopPosition = roundTime(video.currentTime);
+      closeViewedSegment("ended");
       recordInteraction("ended");
     });
 
     video.addEventListener("seeking", () => {
       seekFromPosition = roundTime(video.currentTime);
-      previousTimePosition = null;
-      recordInteraction("seeking", {
-        from: seekFromPosition
-      });
+      closeViewedSegment("seek_start");
+      recordInteraction("seeking", { from: seekFromPosition });
     });
 
     video.addEventListener("seeked", () => {
       const seekToPosition = roundTime(video.currentTime);
+      seekCount += 1;
 
       if (seekFromPosition !== null) {
         if (seekToPosition < seekFromPosition - 1) {
@@ -571,25 +577,15 @@
       }
 
       seekFromPosition = null;
-      previousTimePosition = video.paused ? null : video.currentTime;
-    });
 
-    video.addEventListener("timeupdate", () => {
-      const currentPosition = video.currentTime;
-
-      if (!video.paused && previousTimePosition !== null) {
-        const movedForward = currentPosition > previousTimePosition;
-        const normalProgress = (currentPosition - previousTimePosition) <= 1.5;
-
-        if (movedForward && normalProgress) {
-          addViewedSegment(previousTimePosition, currentPosition, "timeupdate");
-        }
+      if (!video.paused && !video.ended) {
+        startViewedSegment();
       }
-
-      previousTimePosition = currentPosition;
     });
 
     playbackSpeed.addEventListener("change", () => {
+      closeViewedSegment("speed_change");
+
       const newSpeed = Number(playbackSpeed.value);
       video.playbackRate = newSpeed;
       speedChangeCount += 1;
@@ -600,26 +596,25 @@
         page_time_ms: Date.now() - viewStartTime
       });
 
-      recordInteraction("speed_change", {
-        speed: newSpeed
-      });
-    });
+      recordInteraction("speed_change", { speed: newSpeed });
 
-      recordInteraction("speed_change", {
-        speed: newSpeed
-      });
+      if (!video.paused && !video.ended) {
+        startViewedSegment();
+      }
     });
 
     function resetInteractionTracking() {
       viewStartTime = Date.now();
+
       playCount = 0;
       pauseCount = 0;
+      seekCount = 0;
       replayCount = 0;
       speedChangeCount = 0;
 
       firstPlayPosition = "";
       lastStopPosition = "";
-      previousTimePosition = null;
+      activeViewStart = null;
       seekFromPosition = null;
 
       viewedSegments = [];
@@ -652,11 +647,13 @@
       recognitionSlider.value = "5";
       naturalnessSlider.value = "5";
       claritySlider.value = "5";
+
       updateSliderValue(recognitionSlider, recognitionValue);
       updateSliderValue(naturalnessSlider, naturalnessValue);
       updateSliderValue(claritySlider, clarityValue);
 
       message.textContent = "";
+      submitButton.disabled = false;
       submitButton.textContent = currentVideoIndex === videos.length - 1
         ? "Submit Final Evaluation Response"
         : "Submit and Continue";
@@ -671,37 +668,45 @@
       const currentVideo = videos[currentVideoIndex];
       const answer = wordAnswer.value.trim();
       const comment = commentInput.value.trim();
-      previousTimePosition = null;
+
+      closeViewedSegment("submit");
       lastStopPosition = roundTime(video.currentTime);
       recordInteraction("submit");
+
       const timeSpentSeconds = Math.round((Date.now() - viewStartTime) / 1000);
 
       const payload = new FormData();
       payload.append("action", "evaluation");
       payload.append("section", "evaluation");
-      payload.append("interaction_schema_version", "v2");
       payload.append("part", "Part C");
+      payload.append("interaction_schema_version", "v3");
+
       payload.append("participant_id", getParticipantId());
       payload.append("participantID", getParticipantId());
       payload.append("language", languageNames[selectedLanguage]);
       payload.append("video", currentVideo.file);
       payload.append("video_label", currentVideo.label);
+
       payload.append("word_answer", answer);
       payload.append("recognition_rating", recognitionSlider.value);
       payload.append("naturalness_rating", naturalnessSlider.value);
       payload.append("clarity_rating", claritySlider.value);
       payload.append("comment", comment);
-      payload.append("play_count", playCount);
-      payload.append("pause_count", pauseCount);
-      payload.append("replay_count", replayCount);
-      payload.append("speed_change_count", speedChangeCount);
-      payload.append("time_spent_seconds", timeSpentSeconds);
+
+      payload.append("play_count", String(playCount));
+      payload.append("pause_count", String(pauseCount));
+      payload.append("seek_count", String(seekCount));
+      payload.append("replay_count", String(replayCount));
+      payload.append("speed_change_count", String(speedChangeCount));
+      payload.append("time_spent_seconds", String(timeSpentSeconds));
+
       payload.append("playback_speed_at_submit", String(video.playbackRate));
       payload.append("video_duration_seconds", String(getVideoDuration()));
       payload.append("first_play_position_seconds", String(firstPlayPosition));
       payload.append("last_stop_position_seconds", String(lastStopPosition));
       payload.append("total_viewed_seconds", String(getTotalViewedSeconds()));
       payload.append("unique_viewed_seconds", String(getUniqueViewedSeconds()));
+
       payload.append("viewed_segments_json", JSON.stringify(viewedSegments));
       payload.append("seek_events_json", JSON.stringify(seekEvents));
       payload.append("speed_history_json", JSON.stringify(speedHistory));
@@ -715,6 +720,7 @@
       );
 
       message.textContent = "Submitting...";
+      submitButton.disabled = true;
 
       try {
         await fetch(GOOGLE_SCRIPT_URL, {
@@ -733,7 +739,9 @@
           completeArea.classList.remove("hidden");
         }
       } catch (error) {
+        console.error(error);
         message.textContent = "Submission failed. Please try again.";
+        submitButton.disabled = false;
       }
     });
 
