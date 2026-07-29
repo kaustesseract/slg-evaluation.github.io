@@ -404,16 +404,16 @@
     let pauseCount = 0;
     let replayCount = 0;
     let speedChangeCount = 0;
-    let lastVideoTime = 0;
 
-    let openViewStart = null;
     let firstPlayPosition = "";
     let lastStopPosition = "";
+    let previousTimePosition = null;
+    let seekFromPosition = null;
+
     let viewedSegments = [];
     let seekEvents = [];
     let speedHistory = [];
     let interactionEvents = [];
-    let seekFromPosition = null;
 
     function getParticipantId() {
       const existingId = sessionStorage.getItem("participant_id");
@@ -454,27 +454,27 @@
       });
     }
 
-    function closeOpenViewSegment(reason) {
-      if (openViewStart === null) {
+    function addViewedSegment(start, end, reason) {
+      const startPosition = roundTime(start);
+      const endPosition = roundTime(end);
+
+      if (startPosition === "" || endPosition === "") {
         return;
       }
 
-      const endPosition = roundTime(video.currentTime);
-      const startPosition = roundTime(openViewStart);
-
-      if (endPosition !== "" && startPosition !== "" && endPosition >= startPosition) {
-        viewedSegments.push({
-          start: startPosition,
-          end: endPosition,
-          duration: roundTime(endPosition - startPosition),
-          playback_speed: Number(video.playbackRate),
-          reason: reason
-        });
-
-        lastStopPosition = endPosition;
+      if (endPosition <= startPosition) {
+        return;
       }
 
-      openViewStart = null;
+      viewedSegments.push({
+        start: startPosition,
+        end: endPosition,
+        duration: roundTime(endPosition - startPosition),
+        playback_speed: Number(video.playbackRate),
+        reason: reason
+      });
+
+      lastStopPosition = endPosition;
     }
 
     function getTotalViewedSeconds() {
@@ -489,7 +489,7 @@
     function getUniqueViewedSeconds() {
       const ranges = viewedSegments
         .map((segment) => [Number(segment.start), Number(segment.end)])
-        .filter((range) => Number.isFinite(range[0]) && Number.isFinite(range[1]) && range[1] >= range[0])
+        .filter((range) => Number.isFinite(range[0]) && Number.isFinite(range[1]) && range[1] > range[0])
         .sort((a, b) => a[0] - b[0]);
 
       if (ranges.length === 0) {
@@ -522,28 +522,31 @@
         firstPlayPosition = roundTime(video.currentTime);
       }
 
-      if (openViewStart === null) {
-        openViewStart = video.currentTime;
-      }
-
+      previousTimePosition = video.currentTime;
       recordInteraction("play");
     });
 
     video.addEventListener("pause", () => {
       if (!video.ended) {
         pauseCount += 1;
-        closeOpenViewSegment("pause");
+        previousTimePosition = null;
+        lastStopPosition = roundTime(video.currentTime);
         recordInteraction("pause");
       }
     });
 
     video.addEventListener("ended", () => {
-      closeOpenViewSegment("ended");
+      previousTimePosition = null;
+      lastStopPosition = roundTime(video.currentTime);
       recordInteraction("ended");
     });
 
     video.addEventListener("seeking", () => {
-      seekFromPosition = roundTime(lastVideoTime);
+      seekFromPosition = roundTime(video.currentTime);
+      previousTimePosition = null;
+      recordInteraction("seeking", {
+        from: seekFromPosition
+      });
     });
 
     video.addEventListener("seeked", () => {
@@ -561,22 +564,29 @@
           playback_speed: Number(video.playbackRate)
         });
 
-        recordInteraction("seek", {
+        recordInteraction("seeked", {
           from: seekFromPosition,
           to: seekToPosition
         });
       }
 
       seekFromPosition = null;
-      lastVideoTime = video.currentTime;
-
-      if (!video.paused && openViewStart === null) {
-        openViewStart = video.currentTime;
-      }
+      previousTimePosition = video.paused ? null : video.currentTime;
     });
 
     video.addEventListener("timeupdate", () => {
-      lastVideoTime = video.currentTime;
+      const currentPosition = video.currentTime;
+
+      if (!video.paused && previousTimePosition !== null) {
+        const movedForward = currentPosition > previousTimePosition;
+        const normalProgress = (currentPosition - previousTimePosition) <= 1.5;
+
+        if (movedForward && normalProgress) {
+          addViewedSegment(previousTimePosition, currentPosition, "timeupdate");
+        }
+      }
+
+      previousTimePosition = currentPosition;
     });
 
     playbackSpeed.addEventListener("change", () => {
@@ -595,22 +605,27 @@
       });
     });
 
+      recordInteraction("speed_change", {
+        speed: newSpeed
+      });
+    });
+
     function resetInteractionTracking() {
       viewStartTime = Date.now();
       playCount = 0;
       pauseCount = 0;
       replayCount = 0;
       speedChangeCount = 0;
-      lastVideoTime = 0;
 
-      openViewStart = null;
       firstPlayPosition = "";
       lastStopPosition = "";
+      previousTimePosition = null;
+      seekFromPosition = null;
+
       viewedSegments = [];
       seekEvents = [];
       speedHistory = [];
       interactionEvents = [];
-      seekFromPosition = null;
 
       playbackSpeed.value = "1";
       video.playbackRate = 1;
@@ -656,13 +671,15 @@
       const currentVideo = videos[currentVideoIndex];
       const answer = wordAnswer.value.trim();
       const comment = commentInput.value.trim();
-      closeOpenViewSegment("submit");
+      previousTimePosition = null;
+      lastStopPosition = roundTime(video.currentTime);
       recordInteraction("submit");
       const timeSpentSeconds = Math.round((Date.now() - viewStartTime) / 1000);
 
       const payload = new FormData();
       payload.append("action", "evaluation");
       payload.append("section", "evaluation");
+      payload.append("interaction_schema_version", "v2");
       payload.append("part", "Part C");
       payload.append("participant_id", getParticipantId());
       payload.append("participantID", getParticipantId());
