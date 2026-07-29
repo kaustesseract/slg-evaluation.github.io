@@ -491,6 +491,7 @@
       const payload = new FormData();
       payload.append("action", "evaluation");
       payload.append("section", "evaluation");
+      payload.append("part", "Part C");
       payload.append("participant_id", getParticipantId());
       payload.append("participantID", getParticipantId());
       payload.append("language", languageNames[selectedLanguage]);
@@ -527,6 +528,7 @@
           showCurrentVideo();
           message.textContent = "Response submitted. Please evaluate the next video.";
         } else {
+          sessionStorage.setItem("evaluation_complete", "true");
           taskArea.classList.add("hidden");
           completeArea.classList.remove("hidden");
         }
