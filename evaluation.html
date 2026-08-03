@@ -460,7 +460,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
         <p class="subtitle center" id="language-title">Main fingerspelling video evaluation</p>
       </div>
       <div class="instruction notice">
-        Watch each short rendered 3D fingerspelling video. For every video, type the word you think was fingerspelled and use the 0-10 sliders to rate recognition, naturalness, and clarity.
+        Watch each short rendered 3D fingerspelling video. For every video, type the word you think was fingerspelled and use the 0-10 sliders to rate recognition, naturalness, and clarity. There are 10 videos in this main evaluation task.
       </div>
       <div id="task-area">
         <div class="video-wrap">
@@ -469,7 +469,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
             Your browser does not support the video tag.
           </video>
         </div>
-        <p class="video-count" id="video-count">Video 1 of 2</p>
+        <p class="video-count" id="video-count">Video 1 of 10</p>
         <div class="speed-row">
           <label for="playback-speed" style="margin:0;">Playback speed</label>
           <select id="playback-speed">
@@ -532,12 +532,28 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
 
     const evaluationVideosByLanguage = {
       ASL: [
-        { file: "asl_hello.mp4", label: "Video 1" },
-        { file: "asl_goodbye.mp4", label: "Video 2" }
+        { file: "asl/embolden.mp4", label: "Video 1" },
+        { file: "asl/extraverted.mp4", label: "Video 2" },
+        { file: "asl/frequency.mp4", label: "Video 3" },
+        { file: "asl/happily.mp4", label: "Video 4" },
+        { file: "asl/hungriest.mp4", label: "Video 5" },
+        { file: "asl/irrational.mp4", label: "Video 6" },
+        { file: "asl/misnomer.mp4", label: "Video 7" },
+        { file: "asl/shock.mp4", label: "Video 8" },
+        { file: "asl/uptown.mp4", label: "Video 9" },
+        { file: "asl/zoned.mp4", label: "Video 10" }
       ],
       Auslan: [
-        { file: "auslan_hello.mp4", label: "Video 1" },
-        { file: "auslan_goodbye.mp4", label: "Video 2" }
+        { file: "auslan/embolden.mp4", label: "Video 1" },
+        { file: "auslan/extraverted.mp4", label: "Video 2" },
+        { file: "auslan/frequency.mp4", label: "Video 3" },
+        { file: "auslan/happily.mp4", label: "Video 4" },
+        { file: "auslan/hungriest.mp4", label: "Video 5" },
+        { file: "auslan/irrational.mp4", label: "Video 6" },
+        { file: "auslan/misnomer.mp4", label: "Video 7" },
+        { file: "auslan/shock.mp4", label: "Video 8" },
+        { file: "auslan/uptown.mp4", label: "Video 9" },
+        { file: "auslan/zoned.mp4", label: "Video 10" }
       ]
     };
 
