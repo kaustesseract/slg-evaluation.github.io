@@ -436,6 +436,55 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
   h1{font-size:clamp(32px,11vw,50px);}
 }
 
+
+.required-note{
+  margin:12px 0 22px;
+  color:#b91c1c;
+  font-size:14px;
+  font-weight:900;
+}
+
+.form-error-summary{
+  margin:0 0 22px;
+  padding:16px 18px;
+  border:1px solid rgba(185,28,28,.28);
+  border-left:6px solid #dc2626;
+  border-radius:18px;
+  background:rgba(254,242,242,.96);
+  color:#991b1b;
+  font-weight:850;
+  line-height:1.55;
+  box-shadow:0 14px 30px rgba(185,28,28,.10);
+}
+
+.form-error-summary[hidden],
+.field-error-message[hidden]{
+  display:none!important;
+}
+
+.question.has-error{
+  border-color:rgba(220,38,38,.42);
+  background:rgba(254,242,242,.82);
+  box-shadow:0 16px 34px rgba(185,28,28,.10);
+}
+
+.question.has-error h3{
+  color:#991b1b;
+}
+
+.question.has-error .choice-list label{
+  border-color:rgba(220,38,38,.30);
+  background:#fff7f7;
+}
+
+.field-error-message{
+  margin:12px 0 0;
+  color:#b91c1c;
+  font-size:14px;
+  font-weight:900;
+  line-height:1.45;
+}
+
   </style>
 </head>
 <body>
@@ -459,22 +508,26 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
           <span class="eyebrow">Step 1 of 4</span>
           <h1>Survey</h1>
           <p class="subtitle">Please complete this short questionnaire before beginning the screening.</p>
-          <form id="surveyForm">
-            <div class="question"><h3>A1. Are you 18 years of age or older?</h3>
+          <form id="surveyForm" novalidate>
+            <p class="required-note">Questions A1 to A5 are required. Question A6 is optional.</p>
+            <div id="survey-error-summary" class="form-error-summary" role="alert" aria-live="assertive" hidden></div>
+            <div class="question" data-required-group="age" data-question-label="A1. Are you 18 years of age or older?"><h3>A1. Are you 18 years of age or older?</h3>
               <div class="choice-list">
                 <label><input type="radio" name="age" value="Yes" required> Yes</label>
                 <label><input type="radio" name="age" value="No"> No</label>
               </div>
+              <p class="field-error-message" data-error-for="age" hidden></p>
             </div>
-            <div class="question"><h3>A2. Which sign language are you proficient in?</h3>
+            <div class="question" data-required-group="language" data-question-label="A2. Which sign language are you proficient in?"><h3>A2. Which sign language are you proficient in?</h3>
               <div class="choice-list">
                 <label><input type="radio" name="language" value="Auslan" required> Australian Sign Language (Auslan)</label>
                 <label><input type="radio" name="language" value="ASL"> American Sign Language (ASL)</label>
                 <label><input type="radio" name="language" value="Other"> Other</label>
                 <label><input type="radio" name="language" value="None"> None of the above</label>
               </div>
+              <p class="field-error-message" data-error-for="language" hidden></p>
             </div>
-            <div class="question"><h3>A3. How would you describe your proficiency?</h3>
+            <div class="question" data-required-group="proficiency" data-question-label="A3. How would you describe your proficiency?"><h3>A3. How would you describe your proficiency?</h3>
               <div class="choice-list">
                 <label><input type="radio" name="proficiency" value="Beginner" required> Beginner</label>
                 <label><input type="radio" name="proficiency" value="Intermediate"> Intermediate</label>
@@ -482,8 +535,9 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
                 <label><input type="radio" name="proficiency" value="Native"> Native or near-native</label>
                 <label><input type="radio" name="proficiency" value="Professional"> Professional or interpreter-level</label>
               </div>
+              <p class="field-error-message" data-error-for="proficiency" hidden></p>
             </div>
-            <div class="question"><h3>A4. How many years of experience do you have?</h3>
+            <div class="question" data-required-group="experience" data-question-label="A4. How many years of experience do you have?"><h3>A4. How many years of experience do you have?</h3>
               <div class="choice-list">
                 <label><input type="radio" name="experience" value="Less than 1 year" required> Less than 1 year</label>
                 <label><input type="radio" name="experience" value="1-3 years"> 1–3 years</label>
@@ -491,13 +545,15 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
                 <label><input type="radio" name="experience" value="8-10 years"> 8–10 years</label>
                 <label><input type="radio" name="experience" value="More than 10 years"> More than 10 years</label>
               </div>
+              <p class="field-error-message" data-error-for="experience" hidden></p>
             </div>
-            <div class="question"><h3>A5. Do you regularly watch, use, teach, interpret, or communicate in this sign language?</h3>
+            <div class="question" data-required-group="regular" data-question-label="A5. Do you regularly watch, use, teach, interpret, or communicate in this sign language?"><h3>A5. Do you regularly watch, use, teach, interpret, or communicate in this sign language?</h3>
               <div class="choice-list">
                 <label><input type="radio" name="regular" value="Yes" required> Yes</label>
                 <label><input type="radio" name="regular" value="No"> No</label>
                 <label><input type="radio" name="regular" value="Prefer not to say"> Prefer not to say</label>
               </div>
+              <p class="field-error-message" data-error-for="regular" hidden></p>
             </div>
             <div class="question"><h3>A6. Do you have any comments about your sign language background or experience?</h3>
               <textarea name="comments" placeholder="Optional"></textarea>
@@ -560,9 +616,140 @@ const beginScreeningLink=document.getElementById("beginScreeningLink");
 const form=document.getElementById("surveyForm");
 const submitBtn=document.getElementById("submitBtn");
 
+
+const requiredSurveyFields = [
+    {
+        name: "age",
+        label: "A1. Are you 18 years of age or older?",
+        message: "Please answer A1. Are you 18 years of age or older?"
+    },
+    {
+        name: "language",
+        label: "A2. Which sign language are you proficient in?",
+        message: "Please answer A2. Which sign language are you proficient in?"
+    },
+    {
+        name: "proficiency",
+        label: "A3. How would you describe your proficiency?",
+        message: "Please answer A3. How would you describe your proficiency?"
+    },
+    {
+        name: "experience",
+        label: "A4. How many years of experience do you have?",
+        message: "Please answer A4. How many years of experience do you have?"
+    },
+    {
+        name: "regular",
+        label: "A5. Do you regularly watch, use, teach, interpret, or communicate in this sign language?",
+        message: "Please answer A5. Do you regularly watch, use, teach, interpret, or communicate in this sign language?"
+    }
+];
+
+const surveyErrorSummary = document.getElementById("survey-error-summary");
+
+function setFieldError(fieldName, messageText) {
+    const questionBlock = form.querySelector(`[data-required-group="${fieldName}"]`);
+    const fieldError = form.querySelector(`[data-error-for="${fieldName}"]`);
+
+    if (questionBlock) {
+        questionBlock.classList.add("has-error");
+    }
+
+    if (fieldError) {
+        fieldError.textContent = messageText;
+        fieldError.hidden = false;
+    }
+}
+
+function clearFieldError(fieldName) {
+    const questionBlock = form.querySelector(`[data-required-group="${fieldName}"]`);
+    const fieldError = form.querySelector(`[data-error-for="${fieldName}"]`);
+
+    if (questionBlock) {
+        questionBlock.classList.remove("has-error");
+    }
+
+    if (fieldError) {
+        fieldError.textContent = "";
+        fieldError.hidden = true;
+    }
+}
+
+function clearSurveyErrorSummary() {
+    if (surveyErrorSummary) {
+        surveyErrorSummary.textContent = "";
+        surveyErrorSummary.hidden = true;
+    }
+}
+
+function validateRequiredSurveyFields() {
+    const missingFields = [];
+    let firstMissingInput = null;
+
+    requiredSurveyFields.forEach((field) => {
+        const checkedInput = form.querySelector(`input[name="${field.name}"]:checked`);
+        const firstInput = form.querySelector(`input[name="${field.name}"]`);
+
+        if (!checkedInput) {
+            missingFields.push(field);
+            setFieldError(field.name, field.message);
+
+            if (!firstMissingInput && firstInput) {
+                firstMissingInput = firstInput;
+            }
+        } else {
+            clearFieldError(field.name);
+        }
+    });
+
+    if (missingFields.length > 0) {
+        if (surveyErrorSummary) {
+            surveyErrorSummary.innerHTML =
+                `<strong>Please complete the required questions before continuing.</strong><br>` +
+                missingFields.map((field) => `• ${field.label}`).join("<br>");
+            surveyErrorSummary.hidden = false;
+        }
+
+        if (firstMissingInput) {
+            const firstQuestion = firstMissingInput.closest(".question");
+            if (firstQuestion) {
+                firstQuestion.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            firstMissingInput.focus({ preventScroll: true });
+        }
+
+        return false;
+    }
+
+    clearSurveyErrorSummary();
+    return true;
+}
+
+requiredSurveyFields.forEach((field) => {
+    form.querySelectorAll(`input[name="${field.name}"]`).forEach((input) => {
+        input.addEventListener("change", () => {
+            clearFieldError(field.name);
+
+            const stillMissing = requiredSurveyFields.some((requiredField) => {
+                return !form.querySelector(`input[name="${requiredField.name}"]:checked`);
+            });
+
+            if (!stillMissing) {
+                clearSurveyErrorSummary();
+            }
+        });
+    });
+});
+
 form.addEventListener("submit",async(e)=>{
 
     e.preventDefault();
+
+    if (!validateRequiredSurveyFields()) {
+        submitBtn.disabled=false;
+        submitBtn.textContent="Submit Survey";
+        return;
+    }
 
     submitBtn.disabled=true;
     submitBtn.textContent="Saving Responses...";
