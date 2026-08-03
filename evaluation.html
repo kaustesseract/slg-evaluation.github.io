@@ -668,10 +668,12 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
     }
 
     function getTotalViewedSeconds() {
-      return roundTime(viewedSegments.reduce((total, segment) => {
-        const duration = Number(segment.duration);
-        return total + (Number.isFinite(duration) ? duration : 0);
-      }, 0));
+      return roundTime(
+        viewedSegments.reduce((total, segment) => {
+          const duration = Number(segment.duration);
+          return total + (Number.isFinite(duration) ? duration : 0);
+        }, 0)
+      );
     }
 
     function getUniqueViewedSeconds() {
@@ -687,6 +689,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       const merged = [];
       for (const range of ranges) {
         const previous = merged[merged.length - 1];
+
         if (!previous || range[0] > previous[1]) {
           merged.push([...range]);
         } else {
@@ -694,7 +697,9 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
         }
       }
 
-      return roundTime(merged.reduce((total, range) => total + (range[1] - range[0]), 0));
+      return roundTime(
+        merged.reduce((total, range) => total + (range[1] - range[0]), 0)
+      );
     }
 
     recognitionSlider.addEventListener("input", () => updateSliderValue(recognitionSlider, recognitionValue));
@@ -703,9 +708,11 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
 
     video.addEventListener("play", () => {
       playCount += 1;
+
       if (firstPlayPosition === "") {
         firstPlayPosition = roundTime(video.currentTime);
       }
+
       startViewedSegment();
       recordInteraction("play");
     });
@@ -746,7 +753,10 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
           playback_speed: Number(video.playbackRate)
         });
 
-        recordInteraction("seeked", { from: seekFromPosition, to: seekToPosition });
+        recordInteraction("seeked", {
+          from: seekFromPosition,
+          to: seekToPosition
+        });
       }
 
       seekFromPosition = null;
@@ -779,21 +789,26 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
 
     function resetInteractionTracking() {
       viewStartTime = Date.now();
+
       playCount = 0;
       pauseCount = 0;
       seekCount = 0;
       replayCount = 0;
       speedChangeCount = 0;
+
       firstPlayPosition = "";
       lastStopPosition = "";
       activeSegmentStart = null;
       seekFromPosition = null;
+
       viewedSegments = [];
       seekEvents = [];
       speedEvents = [];
       interactionEvents = [];
+
       playbackSpeed.value = "1";
       video.playbackRate = 1;
+
       speedEvents.push({
         event_index: 1,
         speed: 1,
@@ -804,6 +819,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
 
     function showCurrentVideo() {
       const currentVideo = videos[currentVideoIndex];
+
       video.pause();
       videoSource.src = currentVideo.file;
       video.load();
@@ -816,6 +832,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       recognitionSlider.value = "5";
       naturalnessSlider.value = "5";
       claritySlider.value = "5";
+
       updateSliderValue(recognitionSlider, recognitionValue);
       updateSliderValue(naturalnessSlider, naturalnessValue);
       updateSliderValue(claritySlider, clarityValue);
@@ -830,6 +847,10 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       wordAnswer.focus();
     }
 
+    function appendFormField(payload, name, value) {
+      payload.append(name, value === undefined || value === null ? "" : String(value));
+    }
+
     function buildEvaluationPayload() {
       const currentVideo = videos[currentVideoIndex];
       const answer = wordAnswer.value.trim();
@@ -840,65 +861,77 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       recordInteraction("submit");
 
       const timeSpentSeconds = Math.round((Date.now() - viewStartTime) / 1000);
+      const participantId = getParticipantId();
 
-      return {
-        action: "evaluation",
-        section: "evaluation",
-        part: "Part C",
-        interaction_schema_version: "v4_normalized",
-        participant_id: getParticipantId(),
-        participantID: getParticipantId(),
-        language: languageNames[selectedLanguage],
-        selected_language_code: selectedLanguage,
-        video: currentVideo.file,
-        video_label: currentVideo.label,
-        word_answer: answer,
-        recognition_rating: recognitionSlider.value,
-        naturalness_rating: naturalnessSlider.value,
-        clarity_rating: claritySlider.value,
-        comment: comment,
-        play_count: String(playCount),
-        pause_count: String(pauseCount),
-        seek_count: String(seekCount),
-        replay_count: String(replayCount),
-        speed_change_count: String(speedChangeCount),
-        time_spent_seconds: String(timeSpentSeconds),
-        playback_speed_at_submit: String(video.playbackRate),
-        video_duration_seconds: String(getVideoDuration()),
-        first_play_position_seconds: String(firstPlayPosition),
-        last_stop_position_seconds: String(lastStopPosition),
-        total_viewed_seconds: String(getTotalViewedSeconds()),
-        unique_viewed_seconds: String(getUniqueViewedSeconds()),
-        viewed_segments: viewedSegments,
-        seek_events: seekEvents,
-        speed_events: speedEvents,
-        interaction_events: interactionEvents,
-        viewed_segments_json: JSON.stringify(viewedSegments),
-        seek_events_json: JSON.stringify(seekEvents),
-        speed_history_json: JSON.stringify(speedEvents),
-        interaction_count: String(interactionEvents.length),
-        interaction_events_json: JSON.stringify(interactionEvents),
-        question: "Main Video Evaluation Task",
-        response: `Word: ${answer} | Recognition: ${recognitionSlider.value} | Naturalness: ${naturalnessSlider.value} | Clarity: ${claritySlider.value} | Comment: ${comment}`
-      };
+      const payload = new FormData();
+
+      appendFormField(payload, "action", "evaluation");
+      appendFormField(payload, "section", "evaluation");
+      appendFormField(payload, "part", "Part C");
+      appendFormField(payload, "interaction_schema_version", "v5_formdata");
+
+      appendFormField(payload, "participant_id", participantId);
+      appendFormField(payload, "participantID", participantId);
+      appendFormField(payload, "language", languageNames[selectedLanguage]);
+      appendFormField(payload, "selected_language_code", selectedLanguage);
+      appendFormField(payload, "video", currentVideo.file);
+      appendFormField(payload, "video_label", currentVideo.label);
+
+      appendFormField(payload, "word_answer", answer);
+      appendFormField(payload, "recognition_rating", recognitionSlider.value);
+      appendFormField(payload, "naturalness_rating", naturalnessSlider.value);
+      appendFormField(payload, "clarity_rating", claritySlider.value);
+      appendFormField(payload, "comment", comment);
+
+      appendFormField(payload, "play_count", playCount);
+      appendFormField(payload, "pause_count", pauseCount);
+      appendFormField(payload, "seek_count", seekCount);
+      appendFormField(payload, "replay_count", replayCount);
+      appendFormField(payload, "speed_change_count", speedChangeCount);
+      appendFormField(payload, "time_spent_seconds", timeSpentSeconds);
+
+      appendFormField(payload, "playback_speed_at_submit", video.playbackRate);
+      appendFormField(payload, "video_duration_seconds", getVideoDuration());
+      appendFormField(payload, "first_play_position_seconds", firstPlayPosition);
+      appendFormField(payload, "last_stop_position_seconds", lastStopPosition);
+      appendFormField(payload, "total_viewed_seconds", getTotalViewedSeconds());
+      appendFormField(payload, "unique_viewed_seconds", getUniqueViewedSeconds());
+
+      appendFormField(payload, "viewed_segments_json", JSON.stringify(viewedSegments));
+      appendFormField(payload, "seek_events_json", JSON.stringify(seekEvents));
+      appendFormField(payload, "speed_history_json", JSON.stringify(speedEvents));
+      appendFormField(payload, "interaction_count", interactionEvents.length);
+      appendFormField(payload, "interaction_events_json", JSON.stringify(interactionEvents));
+
+      appendFormField(payload, "question", "Main Video Evaluation Task");
+      appendFormField(
+        payload,
+        "response",
+        `Word: ${answer} | Recognition: ${recognitionSlider.value} | Naturalness: ${naturalnessSlider.value} | Clarity: ${claritySlider.value} | Comment: ${comment}`
+      );
+
+      return payload;
     }
 
-    async function sendEvaluationPayload(data) {
+    async function sendEvaluationPayload(payload) {
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        body: JSON.stringify(data)
+        body: payload
       });
     }
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const data = buildEvaluationPayload();
+
+      const payload = buildEvaluationPayload();
+
       message.textContent = "Submitting...";
       submitButton.disabled = true;
 
       try {
-        await sendEvaluationPayload(data);
+        await sendEvaluationPayload(payload);
+
         if (currentVideoIndex < videos.length - 1) {
           currentVideoIndex += 1;
           showCurrentVideo();
