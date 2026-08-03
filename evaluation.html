@@ -603,6 +603,8 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
     let lastStopPosition = "";
     let activeSegmentStart = null;
     let seekFromPosition = null;
+    let lastKnownVideoTime = 0;
+    let suppressRateChange = false;
 
     let viewedSegments = [];
     let seekEvents = [];
@@ -659,13 +661,14 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       }
     }
 
-    function closeViewedSegment(reason) {
+    function closeViewedSegment(reason, endOverride = null) {
       if (activeSegmentStart === null) {
         return;
       }
 
+      const rawEnd = endOverride !== null ? endOverride : video.currentTime;
       const start = roundTime(activeSegmentStart);
-      const end = roundTime(video.currentTime);
+      const end = roundTime(rawEnd);
 
       if (start !== "" && end !== "" && end > start) {
         viewedSegments.push({
@@ -722,6 +725,10 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
     naturalnessSlider.addEventListener("input", () => updateSliderValue(naturalnessSlider, naturalnessValue));
     claritySlider.addEventListener("input", () => updateSliderValue(claritySlider, clarityValue));
 
+    video.addEventListener("loadedmetadata", () => {
+      lastKnownVideoTime = 0;
+    });
+
     video.addEventListener("play", () => {
       playCount += 1;
 
@@ -729,6 +736,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
         firstPlayPosition = roundTime(video.currentTime);
       }
 
+      lastKnownVideoTime = video.currentTime;
       startViewedSegment();
       recordInteraction("play");
     });
@@ -737,18 +745,26 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       if (!video.ended) {
         pauseCount += 1;
         closeViewedSegment("pause");
+        lastKnownVideoTime = video.currentTime;
+        lastStopPosition = roundTime(video.currentTime);
         recordInteraction("pause");
       }
     });
 
     video.addEventListener("ended", () => {
       closeViewedSegment("ended");
+      lastKnownVideoTime = video.currentTime;
+      lastStopPosition = roundTime(video.currentTime);
       recordInteraction("ended");
     });
 
     video.addEventListener("seeking", () => {
-      seekFromPosition = roundTime(video.currentTime);
-      closeViewedSegment("seek_start");
+      const fromPosition = Number.isFinite(lastKnownVideoTime)
+        ? lastKnownVideoTime
+        : video.currentTime;
+
+      seekFromPosition = roundTime(fromPosition);
+      closeViewedSegment("seek_start", fromPosition);
       recordInteraction("seeking", { from: seekFromPosition });
     });
 
@@ -776,18 +792,33 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       }
 
       seekFromPosition = null;
+      lastKnownVideoTime = video.currentTime;
 
       if (!video.paused && !video.ended) {
         startViewedSegment();
       }
     });
 
-    playbackSpeed.addEventListener("change", () => {
+    video.addEventListener("timeupdate", () => {
+      lastKnownVideoTime = video.currentTime;
+    });
+
+    video.addEventListener("ratechange", () => {
+      if (suppressRateChange) {
+        return;
+      }
+
       closeViewedSegment("speed_change");
 
-      const newSpeed = Number(playbackSpeed.value);
-      video.playbackRate = newSpeed;
+      const newSpeed = Number(video.playbackRate);
       speedChangeCount += 1;
+
+      const matchingOption = Array.from(playbackSpeed.options).find(
+        (option) => Number(option.value) === newSpeed
+      );
+      if (matchingOption) {
+        playbackSpeed.value = matchingOption.value;
+      }
 
       speedEvents.push({
         event_index: speedEvents.length + 1,
@@ -803,6 +834,10 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       }
     });
 
+    playbackSpeed.addEventListener("change", () => {
+      video.playbackRate = Number(playbackSpeed.value);
+    });
+
     function resetInteractionTracking() {
       viewStartTime = Date.now();
 
@@ -816,14 +851,17 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       lastStopPosition = "";
       activeSegmentStart = null;
       seekFromPosition = null;
+      lastKnownVideoTime = 0;
 
       viewedSegments = [];
       seekEvents = [];
       speedEvents = [];
       interactionEvents = [];
 
+      suppressRateChange = true;
       playbackSpeed.value = "1";
       video.playbackRate = 1;
+      setTimeout(() => { suppressRateChange = false; }, 0);
 
       speedEvents.push({
         event_index: 1,
@@ -873,6 +911,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       const comment = commentInput.value.trim();
 
       closeViewedSegment("submit");
+      lastKnownVideoTime = video.currentTime;
       lastStopPosition = roundTime(video.currentTime);
       recordInteraction("submit");
 
@@ -884,7 +923,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       appendFormField(payload, "action", "evaluation");
       appendFormField(payload, "section", "evaluation");
       appendFormField(payload, "part", "Part C");
-      appendFormField(payload, "interaction_schema_version", "v5_formdata");
+      appendFormField(payload, "interaction_schema_version", "v6_ratechange_seeklogic");
 
       appendFormField(payload, "participant_id", participantId);
       appendFormField(payload, "participantID", participantId);
