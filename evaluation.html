@@ -480,40 +480,40 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
             <option value="1.5">1.5x</option>
           </select>
         </div>
-        <form id="evaluation-form">
+        <form id="evaluation-form" novalidate>
           <div class="question-card">
-            <label for="word-answer">C1.1 What word do you think was fingerspelled in this video?</label>
-            <input id="word-answer" name="word-answer" type="text" autocomplete="off" placeholder="Enter the fingerspelled word here">
+            <label for="word-answer">C1. What word do you think was fingerspelled in this video? <span class="required-note">(required)</span></label>
+            <input id="word-answer" name="word-answer" type="text" autocomplete="off" placeholder="Enter the fingerspelled word here" required aria-required="true">
           </div>
           <div class="question-card">
-            <p class="question-title">C1.2 How easy was it to recognise the fingerspelled word?</p>
+            <p class="question-title">C2. How easy was it to recognise the fingerspelled word? <span class="required-note">(required)</span></p>
             <p class="scale-help">0 = Very difficult to recognise, 10 = Very easy to recognise</p>
             <div class="slider-row">
-              <input id="recognition-rating" name="recognition-rating" type="range" min="0" max="10" step="1" value="5">
+              <input id="recognition-rating" name="recognition-rating" type="range" min="0" max="10" step="1" value="5" required aria-required="true">
               <output class="rating-value" id="recognition-value" for="recognition-rating">5</output>
             </div>
             <div class="scale-labels"><span>0</span><span>10</span></div>
           </div>
           <div class="question-card">
-            <p class="question-title">C1.3 How natural did the signing motion look?</p>
+            <p class="question-title">C3. How natural did the signing motion look? <span class="required-note">(required)</span></p>
             <p class="scale-help">0 = Very unnatural, 10 = Very natural</p>
             <div class="slider-row">
-              <input id="naturalness-rating" name="naturalness-rating" type="range" min="0" max="10" step="1" value="5">
+              <input id="naturalness-rating" name="naturalness-rating" type="range" min="0" max="10" step="1" value="5" required aria-required="true">
               <output class="rating-value" id="naturalness-value" for="naturalness-rating">5</output>
             </div>
             <div class="scale-labels"><span>0</span><span>10</span></div>
           </div>
           <div class="question-card">
-            <p class="question-title">C1.4 How clearly did the video represent the intended word?</p>
+            <p class="question-title">C4. How clearly did the video represent the intended word? <span class="required-note">(required)</span></p>
             <p class="scale-help">0 = Not clear at all, 10 = Very clear</p>
             <div class="slider-row">
-              <input id="clarity-rating" name="clarity-rating" type="range" min="0" max="10" step="1" value="5">
+              <input id="clarity-rating" name="clarity-rating" type="range" min="0" max="10" step="1" value="5" required aria-required="true">
               <output class="rating-value" id="clarity-value" for="clarity-rating">5</output>
             </div>
             <div class="scale-labels"><span>0</span><span>10</span></div>
           </div>
           <div class="question-card">
-            <label for="comment">C1.5 Optional comment. Was there anything that made this video easy or difficult to understand?</label>
+            <label for="comment">C5. Optional comment. Was there anything that made this video easy or difficult to understand?</label>
             <textarea id="comment" name="comment" placeholder="Optional"></textarea>
           </div>
           <div class="actions">
@@ -892,6 +892,11 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       updateSliderValue(claritySlider, clarityValue);
 
       message.textContent = "";
+      message.classList.remove("error");
+      wordAnswer.classList.remove("field-error");
+      recognitionSlider.classList.remove("field-error");
+      naturalnessSlider.classList.remove("field-error");
+      claritySlider.classList.remove("field-error");
       submitButton.disabled = false;
       submitButton.textContent = currentVideoIndex === videos.length - 1
         ? "Submit Final Evaluation Response"
@@ -903,6 +908,50 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
 
     function appendFormField(payload, name, value) {
       payload.append(name, value === undefined || value === null ? "" : String(value));
+    }
+
+    function validateEvaluationForm() {
+      const missing = [];
+
+      wordAnswer.classList.remove("field-error");
+      recognitionSlider.classList.remove("field-error");
+      naturalnessSlider.classList.remove("field-error");
+      claritySlider.classList.remove("field-error");
+      message.classList.remove("error");
+
+      if (!wordAnswer.value.trim()) {
+        missing.push("C1. Please type the word you think was fingerspelled.");
+        wordAnswer.classList.add("field-error");
+      }
+
+      if (recognitionSlider.value === "") {
+        missing.push("C2. Please rate how easy it was to recognise the word.");
+        recognitionSlider.classList.add("field-error");
+      }
+
+      if (naturalnessSlider.value === "") {
+        missing.push("C3. Please rate how natural the signing motion looked.");
+        naturalnessSlider.classList.add("field-error");
+      }
+
+      if (claritySlider.value === "") {
+        missing.push("C4. Please rate how clearly the video represented the intended word.");
+        claritySlider.classList.add("field-error");
+      }
+
+      if (missing.length > 0) {
+        message.classList.add("error");
+        message.innerHTML = "<strong>Please complete the required question(s):</strong><br>" + missing.join("<br>");
+        const firstProblemField = document.querySelector(".field-error");
+        if (firstProblemField) {
+          firstProblemField.focus();
+          firstProblemField.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return false;
+      }
+
+      message.textContent = "";
+      return true;
     }
 
     function buildEvaluationPayload() {
@@ -979,8 +1028,13 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
+      if (!validateEvaluationForm()) {
+        return;
+      }
+
       const payload = buildEvaluationPayload();
 
+      message.classList.remove("error");
       message.textContent = "Submitting...";
       submitButton.disabled = true;
 
