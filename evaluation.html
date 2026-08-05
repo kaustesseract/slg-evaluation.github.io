@@ -473,8 +473,8 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
         <div class="speed-row">
           <label for="playback-speed" style="margin:0;">Playback speed</label>
           <select id="playback-speed">
-            <option value="0.5">0.25x</option>
-            <option value="0.5"selected>0.5x</option>
+            <option value="0.25">0.25x</option>
+            <option value="0.5" selected>0.5x</option>
             <option value="0.75">0.75x</option>
             <option value="1">1x</option>
             <option value="1.25">1.25x</option>
@@ -570,6 +570,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
     const videoCount = document.getElementById("video-count");
     const languageTitle = document.getElementById("language-title");
     const playbackSpeed = document.getElementById("playback-speed");
+    const DEFAULT_PLAYBACK_SPEED = 0.5;
     const submitButton = document.getElementById("submit-button");
     const taskArea = document.getElementById("task-area");
     const completeArea = document.getElementById("complete-area");
@@ -860,13 +861,14 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       interactionEvents = [];
 
       suppressRateChange = true;
-      playbackSpeed.value = "1";
-      video.playbackRate = 1;
+      playbackSpeed.value = String(DEFAULT_PLAYBACK_SPEED);
+      video.defaultPlaybackRate = DEFAULT_PLAYBACK_SPEED;
+      video.playbackRate = DEFAULT_PLAYBACK_SPEED;
       setTimeout(() => { suppressRateChange = false; }, 0);
 
       speedEvents.push({
         event_index: 1,
-        speed: 1,
+        speed: DEFAULT_PLAYBACK_SPEED,
         video_time: 0,
         page_time_ms: 0
       });
