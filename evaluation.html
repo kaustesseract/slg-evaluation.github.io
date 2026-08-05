@@ -452,15 +452,20 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
   <div class="project-pill">Project ID 52521</div>
 </div>
       <div class="progress-row" aria-label="Progress">
-        <div class="progress-step active"></div><div class="progress-step active"></div><div class="progress-step active"></div><div class="progress-step"></div>
+        <div class="progress-step active" id="progress-step-1"></div>
+        <div class="progress-step active" id="progress-step-2"></div>
+        <div class="progress-step active" id="progress-step-3"></div>
+        <div class="progress-step" id="progress-step-4"></div>
       </div>
-      <div class="section-title">
-        <span class="eyebrow">Step 3 of 4</span>
-        <h1>Main Video <span class="gradient-text">Evaluation</span></h1>
-        <p class="subtitle center" id="language-title">Main fingerspelling video evaluation</p>
-      </div>
-      <div class="instruction notice">
-        Watch each short rendered 3D fingerspelling video. For every video, type the word you think was fingerspelled and use the 0-10 sliders to rate recognition, naturalness, and clarity. There are 10 videos in this main evaluation task.
+      <div id="evaluation-header">
+        <div class="section-title">
+          <span class="eyebrow">Step 3 of 4</span>
+          <h1>Main Video <span class="gradient-text">Evaluation</span></h1>
+          <p class="subtitle center" id="language-title">Main fingerspelling video evaluation</p>
+        </div>
+        <div class="instruction notice">
+          Watch each short rendered 3D fingerspelling video. For every video, type the word you think was fingerspelled and use the 0-10 sliders to rate recognition, naturalness, and clarity. There are 10 videos in this main evaluation task.
+        </div>
       </div>
       <div id="task-area">
         <div class="video-wrap">
@@ -523,8 +528,62 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
           <p class="message" id="form-message" aria-live="polite"></p>
         </form>
       </div>
+      <div id="feedback-area" class="hidden">
+        <div class="section-title">
+          <span class="eyebrow">Step 4 of 4</span>
+          <h1>Final <span class="gradient-text">Feedback</span></h1>
+          <p class="subtitle center">Please share your overall feedback about the videos and the evaluation task.</p>
+        </div>
+
+        <div class="instruction notice">
+          Please answer the following questions based on your experience across all videos in the main evaluation.
+        </div>
+
+        <form id="feedback-form" novalidate>
+          <div class="question-card">
+            <label for="feedback-d1">D1. What features made the fingerspelled words easier to recognise?</label>
+            <textarea id="feedback-d1" name="feedback-d1" placeholder="Enter your response"></textarea>
+          </div>
+
+          <div class="question-card">
+            <label for="feedback-d2">D2. What features made the fingerspelled words harder to recognise?</label>
+            <textarea id="feedback-d2" name="feedback-d2" placeholder="Enter your response"></textarea>
+          </div>
+
+          <div class="question-card">
+            <label for="feedback-d3">D3. Did any of the videos look unnatural? If yes, what made them look unnatural?</label>
+            <textarea id="feedback-d3" name="feedback-d3" placeholder="Enter your response"></textarea>
+          </div>
+
+          <div class="question-card">
+            <label for="feedback-d4">D4. Did any video fail to clearly represent the intended word? If yes, what made the word unclear?</label>
+            <textarea id="feedback-d4" name="feedback-d4" placeholder="Enter your response"></textarea>
+          </div>
+
+          <div class="question-card">
+            <label for="feedback-d5">D5. Were any questions, rating scales, or instructions unclear or difficult to answer?</label>
+            <textarea id="feedback-d5" name="feedback-d5" placeholder="Enter your response"></textarea>
+          </div>
+
+          <div class="question-card">
+            <label for="feedback-d6">D6. Is there anything else you would like to tell us about the videos, the survey, or the 3D fingerspelling dataset?</label>
+            <textarea id="feedback-d6" name="feedback-d6" placeholder="Enter your response"></textarea>
+          </div>
+
+          <div class="actions">
+            <button id="feedback-submit-button" type="submit">Submit Final Feedback</button>
+          </div>
+          <p class="message" id="feedback-message" aria-live="polite"></p>
+        </form>
+      </div>
+
       <div id="complete-area" class="hidden">
-        <p class="message complete">All video evaluation responses have been submitted. Thank you.</p>
+        <div class="section-title">
+          <span class="eyebrow">Study completed</span>
+          <h1>Thank <span class="gradient-text">You</span></h1>
+          <p class="subtitle center">Your video evaluations and final feedback have been submitted successfully.</p>
+        </div>
+        <p class="message complete">You have completed all four steps of the study.</p>
       </div>
     </section>
   </main>
@@ -573,7 +632,20 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
     const DEFAULT_PLAYBACK_SPEED = 0.5;
     const submitButton = document.getElementById("submit-button");
     const taskArea = document.getElementById("task-area");
+    const evaluationHeader = document.getElementById("evaluation-header");
+    const feedbackArea = document.getElementById("feedback-area");
+    const feedbackForm = document.getElementById("feedback-form");
+    const feedbackMessage = document.getElementById("feedback-message");
+    const feedbackSubmitButton = document.getElementById("feedback-submit-button");
     const completeArea = document.getElementById("complete-area");
+    const progressStep4 = document.getElementById("progress-step-4");
+
+    const feedbackD1 = document.getElementById("feedback-d1");
+    const feedbackD2 = document.getElementById("feedback-d2");
+    const feedbackD3 = document.getElementById("feedback-d3");
+    const feedbackD4 = document.getElementById("feedback-d4");
+    const feedbackD5 = document.getElementById("feedback-d5");
+    const feedbackD6 = document.getElementById("feedback-d6");
 
     const wordAnswer = document.getElementById("word-answer");
     const commentInput = document.getElementById("comment");
@@ -593,6 +665,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
 
     const videos = evaluationVideosByLanguage[selectedLanguage];
     let currentVideoIndex = 0;
+    let feedbackStartTime = null;
 
     let viewStartTime = Date.now();
     let playCount = 0;
@@ -1028,6 +1101,77 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       });
     }
 
+    function showFinalFeedback() {
+      sessionStorage.setItem("evaluation_complete", "true");
+      taskArea.classList.add("hidden");
+      evaluationHeader.classList.add("hidden");
+      feedbackArea.classList.remove("hidden");
+      completeArea.classList.add("hidden");
+      progressStep4.classList.add("active");
+      feedbackStartTime = Date.now();
+      feedbackMessage.textContent = "";
+      feedbackSubmitButton.disabled = false;
+      feedbackSubmitButton.textContent = "Submit Final Feedback";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setTimeout(() => feedbackD1.focus(), 350);
+    }
+
+    function buildFeedbackPayload() {
+      const participantId = getParticipantId();
+      const d1 = feedbackD1.value.trim();
+      const d2 = feedbackD2.value.trim();
+      const d3 = feedbackD3.value.trim();
+      const d4 = feedbackD4.value.trim();
+      const d5 = feedbackD5.value.trim();
+      const d6 = feedbackD6.value.trim();
+      const timeSpentSeconds = feedbackStartTime
+        ? Math.round((Date.now() - feedbackStartTime) / 1000)
+        : 0;
+
+      const payload = new FormData();
+      appendFormField(payload, "action", "final_feedback");
+      appendFormField(payload, "section", "feedback");
+      appendFormField(payload, "part", "Part D");
+      appendFormField(payload, "participant_id", participantId);
+      appendFormField(payload, "participantID", participantId);
+      appendFormField(payload, "language", languageNames[selectedLanguage]);
+      appendFormField(payload, "selected_language_code", selectedLanguage);
+      appendFormField(payload, "question", "Final Feedback Survey");
+      appendFormField(payload, "d1_easier_to_recognise", d1);
+      appendFormField(payload, "d2_harder_to_recognise", d2);
+      appendFormField(payload, "d3_unnatural_videos", d3);
+      appendFormField(payload, "d4_unclear_intended_word", d4);
+      appendFormField(payload, "d5_unclear_questions_or_instructions", d5);
+      appendFormField(payload, "d6_additional_feedback", d6);
+      appendFormField(payload, "time_spent_seconds", timeSpentSeconds);
+      appendFormField(
+        payload,
+        "response",
+        `D1: ${d1} | D2: ${d2} | D3: ${d3} | D4: ${d4} | D5: ${d5} | D6: ${d6}`
+      );
+      return payload;
+    }
+
+    feedbackForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const payload = buildFeedbackPayload();
+      feedbackMessage.textContent = "Submitting...";
+      feedbackSubmitButton.disabled = true;
+
+      try {
+        await sendEvaluationPayload(payload);
+        sessionStorage.setItem("feedback_complete", "true");
+        feedbackArea.classList.add("hidden");
+        completeArea.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (error) {
+        console.error(error);
+        feedbackMessage.textContent = "Submission failed. Please try again.";
+        feedbackSubmitButton.disabled = false;
+      }
+    });
+
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
@@ -1049,9 +1193,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
           showCurrentVideo();
           message.textContent = "Response submitted. Please evaluate the next video.";
         } else {
-          sessionStorage.setItem("evaluation_complete", "true");
-          taskArea.classList.add("hidden");
-          completeArea.classList.remove("hidden");
+          showFinalFeedback();
         }
       } catch (error) {
         console.error(error);
