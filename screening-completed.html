@@ -454,7 +454,6 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       <div class="section-title">
         <span class="eyebrow">Step 2 completed</span>
         <h1>Screening <span class="gradient-text">Completed</span></h1>
-        <p class="participant">Participant ID<br><strong id="participantID">Loading...</strong></p>
         <p class="success">&#10003; Your screening responses have been recorded successfully.</p>
         <p class="ready">You are now ready to begin the main video evaluation task.</p>
       </div>
@@ -464,14 +463,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
     </section>
   </main>
 <script>
-    const participantID =
-      sessionStorage.getItem("participant_id") ||
-      sessionStorage.getItem("participantID") ||
-      "Unknown";
-
     const selectedLanguage = sessionStorage.getItem("selected_language") || "";
-
-    document.getElementById("participantID").textContent = participantID;
 
     const evaluationLink = document.getElementById("evaluationLink");
 
