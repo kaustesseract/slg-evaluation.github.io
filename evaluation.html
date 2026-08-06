@@ -834,20 +834,26 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
     });
 
     video.addEventListener("seeking", () => {
+      // Browsers may fire many seeking events while the progress bar is dragged.
+      // Preserve only the original position for this completed seek.
+      if (seekFromPosition !== null) {
+        return;
+      }
+
       const fromPosition = Number.isFinite(lastKnownVideoTime)
         ? lastKnownVideoTime
         : video.currentTime;
 
       seekFromPosition = roundTime(fromPosition);
       closeViewedSegment("seek_start", fromPosition);
-      recordInteraction("seeking", { from: seekFromPosition });
     });
 
     video.addEventListener("seeked", () => {
       const seekToPosition = roundTime(video.currentTime);
-      seekCount += 1;
 
       if (seekFromPosition !== null) {
+        seekCount += 1;
+
         if (seekToPosition < seekFromPosition - 1) {
           replayCount += 1;
         }
@@ -860,7 +866,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
           playback_speed: Number(video.playbackRate)
         });
 
-        recordInteraction("seeked", {
+        recordInteraction("seek", {
           from: seekFromPosition,
           to: seekToPosition
         });
@@ -1048,7 +1054,7 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       appendFormField(payload, "action", "evaluation");
       appendFormField(payload, "section", "evaluation");
       appendFormField(payload, "part", "Part C");
-      appendFormField(payload, "interaction_schema_version", "v6_ratechange_seeklogic");
+      appendFormField(payload, "interaction_schema_version", "v7_compact_seeklogic");
 
       appendFormField(payload, "participant_id", participantId);
       appendFormField(payload, "participantID", participantId);
