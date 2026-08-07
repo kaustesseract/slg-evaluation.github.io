@@ -594,25 +594,51 @@ form.addEventListener("submit", (event) => {
   submitBtn.textContent = "Submitting...";
 
   const payload = new FormData();
+  const followupId = crypto.randomUUID
+    ? crypto.randomUUID()
+    : `followup-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   payload.append("action", "followup_interest");
+  payload.append("followup_id", followupId);
   payload.append("name", name);
   payload.append("email", email);
   payload.append("preferred_contact_time", preferredContactTime);
   // Deliberately no participant_id / participantID field anywhere in this
-  // page or payload — this form must stay unlinked from survey responses.
+  // page or payload — followup_id above is a brand-new random ID generated
+  // fresh right here, with no connection to sessionStorage's participant_id.
+  // This form must stay unlinked from survey responses.
 
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: payload
-  }).catch((error) => {
-    console.error("Background submission failed:", error);
-  });
+  submitFollowupInterest(payload);
 
   document.getElementById("followup-form-area").style.display = "none";
   document.getElementById("followup-success-area").style.display = "block";
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+function submitFollowupInterest(payload) {
+  // We tell the participant they can close this tab right after submitting,
+  // so a plain fetch() is risky: if the tab closes before the request
+  // finishes sending, the browser can cancel it mid-flight, which is why
+  // this appeared to work "sometimes." navigator.sendBeacon() is built
+  // specifically for this case — the browser guarantees the request is
+  // queued and sent even if the page unloads immediately after.
+  if (navigator.sendBeacon) {
+    const queued = navigator.sendBeacon(SCRIPT_URL, payload);
+    if (queued) {
+      return;
+    }
+    // If the browser couldn't queue it (rare — e.g. payload too large),
+    // fall through to fetch as a backup.
+  }
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    keepalive: true,
+    body: payload
+  }).catch((error) => {
+    console.error("Background submission failed:", error);
+  });
+}
 
 </script>
 </body>
