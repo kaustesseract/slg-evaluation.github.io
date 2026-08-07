@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Main Video Evaluation Task</title>
+  <title>Follow-up Interview Interest</title>
   <style>
 
 :root{
@@ -436,12 +436,88 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
   h1{font-size:clamp(32px,11vw,50px);}
 }
 
+
+.required-note{
+  margin:12px 0 22px;
+  color:#b91c1c;
+  font-size:14px;
+  font-weight:900;
+}
+
+.form-error-summary{
+  margin:0 0 22px;
+  padding:16px 18px;
+  border:1px solid rgba(185,28,28,.28);
+  border-left:6px solid #dc2626;
+  border-radius:18px;
+  background:rgba(254,242,242,.96);
+  color:#991b1b;
+  font-weight:850;
+  line-height:1.55;
+  box-shadow:0 14px 30px rgba(185,28,28,.10);
+}
+
+.form-error-summary[hidden],
+.field-error-message[hidden]{
+  display:none!important;
+}
+
+.question.has-error{
+  border-color:rgba(220,38,38,.42);
+  background:rgba(254,242,242,.82);
+  box-shadow:0 16px 34px rgba(185,28,28,.10);
+}
+
+.question.has-error h3{
+  color:#991b1b;
+}
+
+.question.has-error .choice-list label{
+  border-color:rgba(220,38,38,.30);
+  background:#fff7f7;
+}
+
+.field-error-message{
+  margin:12px 0 0;
+  color:#b91c1c;
+  font-size:14px;
+  font-weight:900;
+  line-height:1.45;
+}
+
   </style>
+
+<style>
+input[type="email"]{
+  width:100%;
+  border:1px solid rgba(15,23,42,.15);
+  border-radius:16px;
+  background:rgba(255,255,255,.92);
+  color:var(--ink);
+  padding:14px 16px;
+  font-size:16px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+}
+.field-label{
+  display:block;
+  color:var(--monash-dark);
+  font-weight:800;
+  margin-bottom:8px;
+}
+.field-block{margin:22px 0;}
+.field-hint{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:14px;
+  font-weight:600;
+}
+</style>
 </head>
 <body>
-  <main class="page">
-    <section class="evaluation-panel">
-      <div class="brand-row">
+  <main class="app-shell">
+    <section class="container">
+      <div class="content">
+        <div class="brand-row">
   <div class="brand-left">
     <div class="logo-tile"><img src="Arms_of_Monash_University.svg" alt="Monash University logo"></div>
     <div>
@@ -451,764 +527,119 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
   </div>
   <div class="project-pill">Project ID 52521</div>
 </div>
-      <div class="progress-row" aria-label="Progress">
-        <div class="progress-step active" id="progress-step-1"></div>
-        <div class="progress-step active" id="progress-step-2"></div>
-        <div class="progress-step active" id="progress-step-3"></div>
-        <div class="progress-step" id="progress-step-4"></div>
-      </div>
-      <div id="evaluation-header">
-        <div class="section-title">
-          <span class="eyebrow">Step 3 of 4</span>
-          <h1>Main Video <span class="gradient-text">Evaluation</span></h1>
-          <p class="subtitle center" id="language-title">Main fingerspelling video evaluation</p>
-        </div>
-        <div class="instruction notice">
-          Watch each short rendered 3D fingerspelling video. For every video, type the word you think was fingerspelled and use the 0-10 sliders to rate recognition, naturalness, and clarity. There are 10 videos in this main evaluation task.
-        </div>
-      </div>
-      <div id="task-area">
-        <div class="video-wrap">
-          <video id="evaluation-video" controls playsinline preload="metadata">
-            <source id="video-source" src="" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <p class="video-count" id="video-count">Video 1 of 10</p>
-        <div class="speed-row">
-          <label for="playback-speed" style="margin:0;">Playback speed</label>
-          <select id="playback-speed">
-            <option value="0.25">0.25x</option>
-            <option value="0.5" selected>0.5x</option>
-            <option value="0.75">0.75x</option>
-            <option value="1">1x</option>
-            <option value="1.25">1.25x</option>
-            <option value="1.5">1.5x</option>
-          </select>
-        </div>
-        <form id="evaluation-form" novalidate>
-          <div class="question-card">
-            <label for="word-answer">C1. What word do you think was fingerspelled in this video? <span class="required-note">(required)</span></label>
-            <input id="word-answer" name="word-answer" type="text" autocomplete="off" placeholder="Enter the fingerspelled word here" required aria-required="true">
+
+        <div id="followup-form-area">
+          <span class="eyebrow">Optional &middot; Not linked to your survey responses</span>
+          <h1>Follow-up Interview Interest</h1>
+          <p class="subtitle">Some participants may be invited to take part in an optional follow-up interview. If you'd be willing to be contacted about this, please leave your details below.</p>
+
+          <div class="instruction notice">
+            This form is completely separate from your survey responses and cannot be linked back to them in any way, as described in the Explanatory Statement. Providing your details here is entirely optional.
           </div>
-          <div class="question-card">
-            <p class="question-title">C2. How easy was it to recognise the fingerspelled word? <span class="required-note">(required)</span></p>
-            <p class="scale-help">0 = Very difficult to recognise, 10 = Very easy to recognise</p>
-            <div class="slider-row">
-              <input id="recognition-rating" name="recognition-rating" type="range" min="0" max="10" step="1" value="5" required aria-required="true">
-              <output class="rating-value" id="recognition-value" for="recognition-rating">5</output>
+
+          <form id="followupForm" novalidate>
+            <div class="field-block">
+              <label class="field-label" for="followup-name">Name</label>
+              <input type="text" id="followup-name" name="name" required aria-required="true">
             </div>
-            <div class="scale-labels"><span>0</span><span>10</span></div>
-          </div>
-          <div class="question-card">
-            <p class="question-title">C3. How natural did the signing motion look? <span class="required-note">(required)</span></p>
-            <p class="scale-help">0 = Very unnatural, 10 = Very natural</p>
-            <div class="slider-row">
-              <input id="naturalness-rating" name="naturalness-rating" type="range" min="0" max="10" step="1" value="5" required aria-required="true">
-              <output class="rating-value" id="naturalness-value" for="naturalness-rating">5</output>
+
+            <div class="field-block">
+              <label class="field-label" for="followup-email">Email address</label>
+              <input type="email" id="followup-email" name="email" required aria-required="true">
+              <p class="field-hint">We'll use this to contact you about the optional follow-up interview.</p>
             </div>
-            <div class="scale-labels"><span>0</span><span>10</span></div>
-          </div>
-          <div class="question-card">
-            <p class="question-title">C4. How clearly did the video represent the intended word? <span class="required-note">(required)</span></p>
-            <p class="scale-help">0 = Not clear at all, 10 = Very clear</p>
-            <div class="slider-row">
-              <input id="clarity-rating" name="clarity-rating" type="range" min="0" max="10" step="1" value="5" required aria-required="true">
-              <output class="rating-value" id="clarity-value" for="clarity-rating">5</output>
+
+            <div class="field-block">
+              <label class="field-label" for="followup-contact-time">Preferred contact time (optional)</label>
+              <input type="text" id="followup-contact-time" name="preferred_contact_time" placeholder="e.g. Weekday mornings, AEST">
             </div>
-            <div class="scale-labels"><span>0</span><span>10</span></div>
-          </div>
-          <div class="question-card">
-            <label for="comment">C5. Optional comment. Was there anything that made this video easy or difficult to understand?</label>
-            <textarea id="comment" name="comment" placeholder="Optional"></textarea>
-          </div>
-          <div class="actions">
-            <button id="submit-button" type="submit">Submit and Continue</button>
-          </div>
-          <p class="message" id="form-message" aria-live="polite"></p>
-        </form>
-      </div>
-      <div id="feedback-area" class="hidden">
-        <div class="section-title">
-          <span class="eyebrow">Step 4 of 4</span>
-          <h1>Final <span class="gradient-text">Feedback</span></h1>
-          <p class="subtitle center">Please share your overall feedback about the videos and the evaluation task.</p>
+
+            <button id="followupSubmitBtn" type="submit">Submit My Details</button>
+            <p class="message" id="followup-message" aria-live="polite"></p>
+          </form>
         </div>
 
-        <div class="instruction notice">
-          Please answer the following questions based on your experience across all videos in the main evaluation.
-        </div>
-
-        <form id="feedback-form" novalidate>
-          <div class="question-card">
-            <label for="feedback-d1">D1. What features made the fingerspelled words easier to recognise?</label>
-            <textarea id="feedback-d1" name="feedback-d1" placeholder="Enter your response"></textarea>
-          </div>
-
-          <div class="question-card">
-            <label for="feedback-d2">D2. What features made the fingerspelled words harder to recognise?</label>
-            <textarea id="feedback-d2" name="feedback-d2" placeholder="Enter your response"></textarea>
-          </div>
-
-          <div class="question-card">
-            <label for="feedback-d3">D3. Did any of the videos look unnatural? If yes, what made them look unnatural?</label>
-            <textarea id="feedback-d3" name="feedback-d3" placeholder="Enter your response"></textarea>
-          </div>
-
-          <div class="question-card">
-            <label for="feedback-d4">D4. Did any video fail to clearly represent the intended word? If yes, what made the word unclear?</label>
-            <textarea id="feedback-d4" name="feedback-d4" placeholder="Enter your response"></textarea>
-          </div>
-
-          <div class="question-card">
-            <label for="feedback-d5">D5. Were any questions, rating scales, or instructions unclear or difficult to answer?</label>
-            <textarea id="feedback-d5" name="feedback-d5" placeholder="Enter your response"></textarea>
-          </div>
-
-          <div class="question-card">
-            <label for="feedback-d6">D6. Is there anything else you would like to tell us about the videos, the survey, or the 3D fingerspelling dataset?</label>
-            <textarea id="feedback-d6" name="feedback-d6" placeholder="Enter your response"></textarea>
-          </div>
-
-          <div class="actions">
-            <button id="feedback-submit-button" type="submit">Submit Final Feedback</button>
-          </div>
-          <p class="message" id="feedback-message" aria-live="polite"></p>
-        </form>
-      </div>
-
-      <div id="complete-area" class="hidden">
-        <div class="section-title">
-          <span class="eyebrow">Study completed</span>
-          <h1>Thank <span class="gradient-text">You</span></h1>
-          <p class="subtitle center">Your video evaluations and final feedback have been submitted successfully.</p>
-        </div>
-        <p class="message complete">You have completed all four steps of the study.</p>
-
-        <div class="question-card">
-          <p>If you would like to be contacted for follow-up research studies, please click this link to complete a short form.</p>
-          <a href="followup-interest.html" target="_blank" rel="noopener noreferrer">Follow-up interview interest form</a>
+        <div id="followup-success-area" style="display:none;">
+          <span class="eyebrow">Thank you</span>
+          <h1>Details Received</h1>
+          <p class="success">&#10003; Thank you — your details have been recorded.</p>
+          <p class="ready">The research team will contact you if you're selected for a follow-up interview. You can now close this tab.</p>
         </div>
       </div>
     </section>
   </main>
 <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFEgciWqZSFsCJF4uYr8h9iGyr7Suwzd8AffN_AEQ3916Z5a_YVcEwKCjD7BnOPVkN/exec";
 
-    const evaluationVideosByLanguage = {
-      ASL: [
-        { file: "asl/embolden.mp4", label: "Video 1" },
-        { file: "asl/extraverted.mp4", label: "Video 2" },
-        { file: "asl/frequency.mp4", label: "Video 3" },
-        { file: "asl/happily.mp4", label: "Video 4" },
-        { file: "asl/hungriest.mp4", label: "Video 5" },
-        { file: "asl/irrational.mp4", label: "Video 6" },
-        { file: "asl/misnomer.mp4", label: "Video 7" },
-        { file: "asl/shock.mp4", label: "Video 8" },
-        { file: "asl/uptown.mp4", label: "Video 9" },
-        { file: "asl/zoned.mp4", label: "Video 10" }
-      ],
-      Auslan: [
-        { file: "auslan/embolden.mp4", label: "Video 1" },
-        { file: "auslan/extraverted.mp4", label: "Video 2" },
-        { file: "auslan/frequency.mp4", label: "Video 3" },
-        { file: "auslan/happily.mp4", label: "Video 4" },
-        { file: "auslan/hungriest.mp4", label: "Video 5" },
-        { file: "auslan/irrational.mp4", label: "Video 6" },
-        { file: "auslan/misnomer.mp4", label: "Video 7" },
-        { file: "auslan/shock.mp4", label: "Video 8" },
-        { file: "auslan/uptown.mp4", label: "Video 9" },
-        { file: "auslan/zoned.mp4", label: "Video 10" }
-      ]
-    };
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFEgciWqZSFsCJF4uYr8h9iGyr7Suwzd8AffN_AEQ3916Z5a_YVcEwKCjD7BnOPVkN/exec";
 
-    const languageNames = {
-      ASL: "American Sign Language (ASL)",
-      Auslan: "Australian Sign Language (Auslan)"
-    };
+const form = document.getElementById("followupForm");
+const submitBtn = document.getElementById("followupSubmitBtn");
+const message = document.getElementById("followup-message");
 
-    const form = document.getElementById("evaluation-form");
-    const message = document.getElementById("form-message");
-    const video = document.getElementById("evaluation-video");
-    const videoSource = document.getElementById("video-source");
-    const videoCount = document.getElementById("video-count");
-    const languageTitle = document.getElementById("language-title");
-    const playbackSpeed = document.getElementById("playback-speed");
-    const DEFAULT_PLAYBACK_SPEED = 0.5;
-    const submitButton = document.getElementById("submit-button");
-    const taskArea = document.getElementById("task-area");
-    const evaluationHeader = document.getElementById("evaluation-header");
-    const feedbackArea = document.getElementById("feedback-area");
-    const feedbackForm = document.getElementById("feedback-form");
-    const feedbackMessage = document.getElementById("feedback-message");
-    const feedbackSubmitButton = document.getElementById("feedback-submit-button");
-    const completeArea = document.getElementById("complete-area");
-    const progressStep4 = document.getElementById("progress-step-4");
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
 
-    const feedbackD1 = document.getElementById("feedback-d1");
-    const feedbackD2 = document.getElementById("feedback-d2");
-    const feedbackD3 = document.getElementById("feedback-d3");
-    const feedbackD4 = document.getElementById("feedback-d4");
-    const feedbackD5 = document.getElementById("feedback-d5");
-    const feedbackD6 = document.getElementById("feedback-d6");
+  const name = document.getElementById("followup-name").value.trim();
+  const email = document.getElementById("followup-email").value.trim();
+  const preferredContactTime = document.getElementById("followup-contact-time").value.trim();
 
-    const wordAnswer = document.getElementById("word-answer");
-    const commentInput = document.getElementById("comment");
+  if (!name || !email) {
+    message.classList.add("error");
+    message.textContent = "Please enter your name and email address.";
+    return;
+  }
 
-    const recognitionSlider = document.getElementById("recognition-rating");
-    const naturalnessSlider = document.getElementById("naturalness-rating");
-    const claritySlider = document.getElementById("clarity-rating");
+  message.classList.remove("error");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
 
-    const recognitionValue = document.getElementById("recognition-value");
-    const naturalnessValue = document.getElementById("naturalness-value");
-    const clarityValue = document.getElementById("clarity-value");
+  const payload = new FormData();
+  const followupId = crypto.randomUUID
+    ? crypto.randomUUID()
+    : `followup-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  payload.append("action", "followup_interest");
+  payload.append("followup_id", followupId);
+  payload.append("name", name);
+  payload.append("email", email);
+  payload.append("preferred_contact_time", preferredContactTime);
+  // Deliberately no participant_id / participantID field anywhere in this
+  // page or payload — followup_id above is a brand-new random ID generated
+  // fresh right here, with no connection to sessionStorage's participant_id.
+  // This form must stay unlinked from survey responses.
 
-    let selectedLanguage = sessionStorage.getItem("selected_language") || "ASL";
-    if (!evaluationVideosByLanguage[selectedLanguage]) {
-      selectedLanguage = "ASL";
+  submitFollowupInterest(payload);
+
+  document.getElementById("followup-form-area").style.display = "none";
+  document.getElementById("followup-success-area").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+function submitFollowupInterest(payload) {
+  // We tell the participant they can close this tab right after submitting,
+  // so a plain fetch() is risky: if the tab closes before the request
+  // finishes sending, the browser can cancel it mid-flight, which is why
+  // this appeared to work "sometimes." navigator.sendBeacon() is built
+  // specifically for this case — the browser guarantees the request is
+  // queued and sent even if the page unloads immediately after.
+  if (navigator.sendBeacon) {
+    const queued = navigator.sendBeacon(SCRIPT_URL, payload);
+    if (queued) {
+      return;
     }
-
-    const videos = evaluationVideosByLanguage[selectedLanguage];
-    let currentVideoIndex = 0;
-    let feedbackStartTime = null;
-
-    let viewStartTime = Date.now();
-    let playCount = 0;
-    let pauseCount = 0;
-    let seekCount = 0;
-    let replayCount = 0;
-    let speedChangeCount = 0;
-
-    let firstPlayPosition = "";
-    let lastStopPosition = "";
-    let activeSegmentStart = null;
-    let seekFromPosition = null;
-    let lastKnownVideoTime = 0;
-    let suppressRateChange = false;
-
-    let viewedSegments = [];
-    let seekEvents = [];
-    let speedEvents = [];
-    let interactionEvents = [];
-
-    function getParticipantId() {
-      const existingId = sessionStorage.getItem("participant_id");
-      if (existingId) {
-        return existingId;
-      }
-
-      const newId = crypto.randomUUID
-        ? crypto.randomUUID()
-        : `participant-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-      sessionStorage.setItem("participant_id", newId);
-      return newId;
-    }
-
-    function updateSliderValue(slider, output) {
-      output.textContent = slider.value;
-    }
-
-    function roundTime(value) {
-      if (!Number.isFinite(value)) {
-        return "";
-      }
-      return Math.round(value * 100) / 100;
-    }
-
-    function getVideoDuration() {
-      return Number.isFinite(video.duration) ? roundTime(video.duration) : "";
-    }
-
-    function getPageTimeMs() {
-      return Date.now() - viewStartTime;
-    }
-
-    function recordInteraction(type, extra = {}) {
-      interactionEvents.push({
-        event_index: interactionEvents.length + 1,
-        type,
-        video_time: roundTime(video.currentTime),
-        page_time_ms: getPageTimeMs(),
-        playback_speed: Number(video.playbackRate),
-        ...extra
-      });
-    }
-
-    function startViewedSegment() {
-      if (activeSegmentStart === null) {
-        activeSegmentStart = video.currentTime;
-      }
-    }
-
-    function closeViewedSegment(reason, endOverride = null) {
-      if (activeSegmentStart === null) {
-        return;
-      }
-
-      const rawEnd = endOverride !== null ? endOverride : video.currentTime;
-      const start = roundTime(activeSegmentStart);
-      const end = roundTime(rawEnd);
-
-      if (start !== "" && end !== "" && end > start) {
-        viewedSegments.push({
-          segment_index: viewedSegments.length + 1,
-          start,
-          end,
-          duration: roundTime(end - start),
-          playback_speed: Number(video.playbackRate),
-          reason
-        });
-
-        lastStopPosition = end;
-      }
-
-      activeSegmentStart = null;
-    }
-
-    function getTotalViewedSeconds() {
-      return roundTime(
-        viewedSegments.reduce((total, segment) => {
-          const duration = Number(segment.duration);
-          return total + (Number.isFinite(duration) ? duration : 0);
-        }, 0)
-      );
-    }
-
-    function getUniqueViewedSeconds() {
-      const ranges = viewedSegments
-        .map((segment) => [Number(segment.start), Number(segment.end)])
-        .filter((range) => Number.isFinite(range[0]) && Number.isFinite(range[1]) && range[1] > range[0])
-        .sort((a, b) => a[0] - b[0]);
-
-      if (ranges.length === 0) {
-        return 0;
-      }
-
-      const merged = [];
-      for (const range of ranges) {
-        const previous = merged[merged.length - 1];
-
-        if (!previous || range[0] > previous[1]) {
-          merged.push([...range]);
-        } else {
-          previous[1] = Math.max(previous[1], range[1]);
-        }
-      }
-
-      return roundTime(
-        merged.reduce((total, range) => total + (range[1] - range[0]), 0)
-      );
-    }
-
-    recognitionSlider.addEventListener("input", () => updateSliderValue(recognitionSlider, recognitionValue));
-    naturalnessSlider.addEventListener("input", () => updateSliderValue(naturalnessSlider, naturalnessValue));
-    claritySlider.addEventListener("input", () => updateSliderValue(claritySlider, clarityValue));
-
-    video.addEventListener("loadedmetadata", () => {
-      lastKnownVideoTime = 0;
-    });
-
-    video.addEventListener("play", () => {
-      playCount += 1;
-
-      if (firstPlayPosition === "") {
-        firstPlayPosition = roundTime(video.currentTime);
-      }
-
-      lastKnownVideoTime = video.currentTime;
-      startViewedSegment();
-      recordInteraction("play");
-    });
-
-    video.addEventListener("pause", () => {
-      if (!video.ended) {
-        pauseCount += 1;
-        closeViewedSegment("pause");
-        lastKnownVideoTime = video.currentTime;
-        lastStopPosition = roundTime(video.currentTime);
-        recordInteraction("pause");
-      }
-    });
-
-    video.addEventListener("ended", () => {
-      closeViewedSegment("ended");
-      lastKnownVideoTime = video.currentTime;
-      lastStopPosition = roundTime(video.currentTime);
-      recordInteraction("ended");
-    });
-
-    video.addEventListener("seeking", () => {
-      // Browsers may fire many seeking events while the progress bar is dragged.
-      // Preserve only the original position for this completed seek.
-      if (seekFromPosition !== null) {
-        return;
-      }
-
-      const fromPosition = Number.isFinite(lastKnownVideoTime)
-        ? lastKnownVideoTime
-        : video.currentTime;
-
-      seekFromPosition = roundTime(fromPosition);
-      closeViewedSegment("seek_start", fromPosition);
-    });
-
-    video.addEventListener("seeked", () => {
-      const seekToPosition = roundTime(video.currentTime);
-
-      if (seekFromPosition !== null) {
-        seekCount += 1;
-
-        if (seekToPosition < seekFromPosition - 1) {
-          replayCount += 1;
-        }
-
-        seekEvents.push({
-          event_index: seekEvents.length + 1,
-          from: seekFromPosition,
-          to: seekToPosition,
-          page_time_ms: getPageTimeMs(),
-          playback_speed: Number(video.playbackRate)
-        });
-
-        recordInteraction("seek", {
-          from: seekFromPosition,
-          to: seekToPosition
-        });
-      }
-
-      seekFromPosition = null;
-      lastKnownVideoTime = video.currentTime;
-
-      if (!video.paused && !video.ended) {
-        startViewedSegment();
-      }
-    });
-
-    video.addEventListener("timeupdate", () => {
-      lastKnownVideoTime = video.currentTime;
-    });
-
-    video.addEventListener("ratechange", () => {
-      if (suppressRateChange) {
-        return;
-      }
-
-      closeViewedSegment("speed_change");
-
-      const newSpeed = Number(video.playbackRate);
-      speedChangeCount += 1;
-
-      const matchingOption = Array.from(playbackSpeed.options).find(
-        (option) => Number(option.value) === newSpeed
-      );
-      if (matchingOption) {
-        playbackSpeed.value = matchingOption.value;
-      }
-
-      speedEvents.push({
-        event_index: speedEvents.length + 1,
-        speed: newSpeed,
-        video_time: roundTime(video.currentTime),
-        page_time_ms: getPageTimeMs()
-      });
-
-      recordInteraction("speed_change", { speed: newSpeed });
-
-      if (!video.paused && !video.ended) {
-        startViewedSegment();
-      }
-    });
-
-    playbackSpeed.addEventListener("change", () => {
-      video.playbackRate = Number(playbackSpeed.value);
-    });
-
-    function resetInteractionTracking() {
-      viewStartTime = Date.now();
-
-      playCount = 0;
-      pauseCount = 0;
-      seekCount = 0;
-      replayCount = 0;
-      speedChangeCount = 0;
-
-      firstPlayPosition = "";
-      lastStopPosition = "";
-      activeSegmentStart = null;
-      seekFromPosition = null;
-      lastKnownVideoTime = 0;
-
-      viewedSegments = [];
-      seekEvents = [];
-      speedEvents = [];
-      interactionEvents = [];
-
-      suppressRateChange = true;
-      playbackSpeed.value = String(DEFAULT_PLAYBACK_SPEED);
-      video.defaultPlaybackRate = DEFAULT_PLAYBACK_SPEED;
-      video.playbackRate = DEFAULT_PLAYBACK_SPEED;
-      setTimeout(() => { suppressRateChange = false; }, 0);
-
-      speedEvents.push({
-        event_index: 1,
-        speed: DEFAULT_PLAYBACK_SPEED,
-        video_time: 0,
-        page_time_ms: 0
-      });
-    }
-
-    function showCurrentVideo() {
-      const currentVideo = videos[currentVideoIndex];
-
-      video.pause();
-      videoSource.src = currentVideo.file;
-      video.load();
-
-      videoCount.textContent = `Video ${currentVideoIndex + 1} of ${videos.length}`;
-      languageTitle.textContent = `${languageNames[selectedLanguage]} main video evaluation`;
-
-      wordAnswer.value = "";
-      commentInput.value = "";
-      recognitionSlider.value = "5";
-      naturalnessSlider.value = "5";
-      claritySlider.value = "5";
-
-      updateSliderValue(recognitionSlider, recognitionValue);
-      updateSliderValue(naturalnessSlider, naturalnessValue);
-      updateSliderValue(claritySlider, clarityValue);
-
-      message.textContent = "";
-      message.classList.remove("error");
-      wordAnswer.classList.remove("field-error");
-      recognitionSlider.classList.remove("field-error");
-      naturalnessSlider.classList.remove("field-error");
-      claritySlider.classList.remove("field-error");
-      submitButton.disabled = false;
-      submitButton.textContent = currentVideoIndex === videos.length - 1
-        ? "Submit Final Evaluation Response"
-        : "Submit and Continue";
-
-      resetInteractionTracking();
-      wordAnswer.focus();
-    }
-
-    function appendFormField(payload, name, value) {
-      payload.append(name, value === undefined || value === null ? "" : String(value));
-    }
-
-    function validateEvaluationForm() {
-      const missing = [];
-
-      wordAnswer.classList.remove("field-error");
-      recognitionSlider.classList.remove("field-error");
-      naturalnessSlider.classList.remove("field-error");
-      claritySlider.classList.remove("field-error");
-      message.classList.remove("error");
-
-      if (!wordAnswer.value.trim()) {
-        missing.push("C1. Please type the word you think was fingerspelled.");
-        wordAnswer.classList.add("field-error");
-      }
-
-      if (recognitionSlider.value === "") {
-        missing.push("C2. Please rate how easy it was to recognise the word.");
-        recognitionSlider.classList.add("field-error");
-      }
-
-      if (naturalnessSlider.value === "") {
-        missing.push("C3. Please rate how natural the signing motion looked.");
-        naturalnessSlider.classList.add("field-error");
-      }
-
-      if (claritySlider.value === "") {
-        missing.push("C4. Please rate how clearly the video represented the intended word.");
-        claritySlider.classList.add("field-error");
-      }
-
-      if (missing.length > 0) {
-        message.classList.add("error");
-        message.innerHTML = "<strong>Please complete the required question(s):</strong><br>" + missing.join("<br>");
-        const firstProblemField = document.querySelector(".field-error");
-        if (firstProblemField) {
-          firstProblemField.focus();
-          firstProblemField.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-        return false;
-      }
-
-      message.textContent = "";
-      return true;
-    }
-
-    function buildEvaluationPayload() {
-      const currentVideo = videos[currentVideoIndex];
-      const answer = wordAnswer.value.trim();
-      const comment = commentInput.value.trim();
-
-      closeViewedSegment("submit");
-      lastKnownVideoTime = video.currentTime;
-      lastStopPosition = roundTime(video.currentTime);
-      recordInteraction("submit");
-
-      const timeSpentSeconds = Math.round((Date.now() - viewStartTime) / 1000);
-      const participantId = getParticipantId();
-
-      const payload = new FormData();
-
-      appendFormField(payload, "action", "evaluation");
-      appendFormField(payload, "section", "evaluation");
-      appendFormField(payload, "part", "Part C");
-      appendFormField(payload, "interaction_schema_version", "v7_compact_seeklogic");
-
-      appendFormField(payload, "participant_id", participantId);
-      appendFormField(payload, "participantID", participantId);
-      appendFormField(payload, "language", languageNames[selectedLanguage]);
-      appendFormField(payload, "selected_language_code", selectedLanguage);
-      appendFormField(payload, "video", currentVideo.file);
-      appendFormField(payload, "video_label", currentVideo.label);
-
-      appendFormField(payload, "word_answer", answer);
-      appendFormField(payload, "recognition_rating", recognitionSlider.value);
-      appendFormField(payload, "naturalness_rating", naturalnessSlider.value);
-      appendFormField(payload, "clarity_rating", claritySlider.value);
-      appendFormField(payload, "comment", comment);
-
-      appendFormField(payload, "play_count", playCount);
-      appendFormField(payload, "pause_count", pauseCount);
-      appendFormField(payload, "seek_count", seekCount);
-      appendFormField(payload, "replay_count", replayCount);
-      appendFormField(payload, "speed_change_count", speedChangeCount);
-      appendFormField(payload, "time_spent_seconds", timeSpentSeconds);
-
-      appendFormField(payload, "playback_speed_at_submit", video.playbackRate);
-      appendFormField(payload, "video_duration_seconds", getVideoDuration());
-      appendFormField(payload, "first_play_position_seconds", firstPlayPosition);
-      appendFormField(payload, "last_stop_position_seconds", lastStopPosition);
-      appendFormField(payload, "total_viewed_seconds", getTotalViewedSeconds());
-      appendFormField(payload, "unique_viewed_seconds", getUniqueViewedSeconds());
-
-      appendFormField(payload, "viewed_segments_json", JSON.stringify(viewedSegments));
-      appendFormField(payload, "seek_events_json", JSON.stringify(seekEvents));
-      appendFormField(payload, "speed_history_json", JSON.stringify(speedEvents));
-      appendFormField(payload, "interaction_count", interactionEvents.length);
-      appendFormField(payload, "interaction_events_json", JSON.stringify(interactionEvents));
-
-      appendFormField(payload, "question", "Main Video Evaluation Task");
-      appendFormField(
-        payload,
-        "response",
-        `Word: ${answer} | Recognition: ${recognitionSlider.value} | Naturalness: ${naturalnessSlider.value} | Clarity: ${claritySlider.value} | Comment: ${comment}`
-      );
-
-      return payload;
-    }
-
-    function sendEvaluationPayload(payload) {
-      // Fire-and-forget: we intentionally do NOT await this fetch before
-      // moving the participant on to the next step. mode: "no-cors" means
-      // we can't read a real success/failure status anyway, so blocking the
-      // UI on it only adds delay without adding certainty. Errors are still
-      // logged to the console for debugging.
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        body: payload
-      }).catch((error) => {
-        console.error("Background submission failed:", error);
-      });
-    }
-
-    function showFinalFeedback() {
-      sessionStorage.setItem("evaluation_complete", "true");
-      taskArea.classList.add("hidden");
-      evaluationHeader.classList.add("hidden");
-      feedbackArea.classList.remove("hidden");
-      completeArea.classList.add("hidden");
-      progressStep4.classList.add("active");
-      feedbackStartTime = Date.now();
-      feedbackMessage.textContent = "";
-      feedbackSubmitButton.disabled = false;
-      feedbackSubmitButton.textContent = "Submit Final Feedback";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      setTimeout(() => feedbackD1.focus(), 350);
-    }
-
-    function buildFeedbackPayload() {
-      const participantId = getParticipantId();
-      const d1 = feedbackD1.value.trim();
-      const d2 = feedbackD2.value.trim();
-      const d3 = feedbackD3.value.trim();
-      const d4 = feedbackD4.value.trim();
-      const d5 = feedbackD5.value.trim();
-      const d6 = feedbackD6.value.trim();
-      const timeSpentSeconds = feedbackStartTime
-        ? Math.round((Date.now() - feedbackStartTime) / 1000)
-        : 0;
-
-      const payload = new FormData();
-      appendFormField(payload, "action", "final_feedback");
-      appendFormField(payload, "section", "feedback");
-      appendFormField(payload, "part", "Part D");
-      appendFormField(payload, "participant_id", participantId);
-      appendFormField(payload, "participantID", participantId);
-      appendFormField(payload, "language", languageNames[selectedLanguage]);
-      appendFormField(payload, "selected_language_code", selectedLanguage);
-      appendFormField(payload, "question", "Final Feedback Survey");
-      appendFormField(payload, "d1_easier_to_recognise", d1);
-      appendFormField(payload, "d2_harder_to_recognise", d2);
-      appendFormField(payload, "d3_unnatural_videos", d3);
-      appendFormField(payload, "d4_unclear_intended_word", d4);
-      appendFormField(payload, "d5_unclear_questions_or_instructions", d5);
-      appendFormField(payload, "d6_additional_feedback", d6);
-      appendFormField(payload, "time_spent_seconds", timeSpentSeconds);
-      appendFormField(
-        payload,
-        "response",
-        `D1: ${d1} | D2: ${d2} | D3: ${d3} | D4: ${d4} | D5: ${d5} | D6: ${d6}`
-      );
-      return payload;
-    }
-
-    feedbackForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      const payload = buildFeedbackPayload();
-      feedbackSubmitButton.disabled = true;
-      feedbackSubmitButton.textContent = "Submitted";
-
-      sendEvaluationPayload(payload);
-
-      sessionStorage.setItem("feedback_complete", "true");
-      feedbackArea.classList.add("hidden");
-      completeArea.classList.remove("hidden");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      if (!validateEvaluationForm()) {
-        return;
-      }
-
-      const payload = buildEvaluationPayload();
-
-      message.classList.remove("error");
-      submitButton.disabled = true;
-
-      sendEvaluationPayload(payload);
-
-      if (currentVideoIndex < videos.length - 1) {
-        currentVideoIndex += 1;
-        showCurrentVideo();
-        message.textContent = "Response submitted. Please evaluate the next video.";
-      } else {
-        showFinalFeedback();
-      }
-    });
-
-    showCurrentVideo();
-  </script>
+    // If the browser couldn't queue it (rare — e.g. payload too large),
+    // fall through to fetch as a backup.
+  }
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    keepalive: true,
+    body: payload
+  }).catch((error) => {
+    console.error("Background submission failed:", error);
+  });
+}
+
+</script>
 </body>
 </html>
