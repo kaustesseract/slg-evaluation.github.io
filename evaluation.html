@@ -1099,11 +1099,18 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       return payload;
     }
 
-    async function sendEvaluationPayload(payload) {
-      await fetch(GOOGLE_SCRIPT_URL, {
+    function sendEvaluationPayload(payload) {
+      // Fire-and-forget: we intentionally do NOT await this fetch before
+      // moving the participant on to the next step. mode: "no-cors" means
+      // we can't read a real success/failure status anyway, so blocking the
+      // UI on it only adds delay without adding certainty. Errors are still
+      // logged to the console for debugging.
+      fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         body: payload
+      }).catch((error) => {
+        console.error("Background submission failed:", error);
       });
     }
 
@@ -1158,27 +1165,22 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       return payload;
     }
 
-    feedbackForm.addEventListener("submit", async (event) => {
+    feedbackForm.addEventListener("submit", (event) => {
       event.preventDefault();
 
       const payload = buildFeedbackPayload();
-      feedbackMessage.textContent = "Submitting...";
       feedbackSubmitButton.disabled = true;
+      feedbackSubmitButton.textContent = "Submitted";
 
-      try {
-        await sendEvaluationPayload(payload);
-        sessionStorage.setItem("feedback_complete", "true");
-        feedbackArea.classList.add("hidden");
-        completeArea.classList.remove("hidden");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } catch (error) {
-        console.error(error);
-        feedbackMessage.textContent = "Submission failed. Please try again.";
-        feedbackSubmitButton.disabled = false;
-      }
+      sendEvaluationPayload(payload);
+
+      sessionStorage.setItem("feedback_complete", "true");
+      feedbackArea.classList.add("hidden");
+      completeArea.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    form.addEventListener("submit", async (event) => {
+    form.addEventListener("submit", (event) => {
       event.preventDefault();
 
       if (!validateEvaluationForm()) {
@@ -1188,23 +1190,16 @@ footer{position:relative;z-index:1;text-align:center;margin:20px 0 0;color:var(-
       const payload = buildEvaluationPayload();
 
       message.classList.remove("error");
-      message.textContent = "Submitting...";
       submitButton.disabled = true;
 
-      try {
-        await sendEvaluationPayload(payload);
+      sendEvaluationPayload(payload);
 
-        if (currentVideoIndex < videos.length - 1) {
-          currentVideoIndex += 1;
-          showCurrentVideo();
-          message.textContent = "Response submitted. Please evaluate the next video.";
-        } else {
-          showFinalFeedback();
-        }
-      } catch (error) {
-        console.error(error);
-        message.textContent = "Submission failed. Please try again.";
-        submitButton.disabled = false;
+      if (currentVideoIndex < videos.length - 1) {
+        currentVideoIndex += 1;
+        showCurrentVideo();
+        message.textContent = "Response submitted. Please evaluate the next video.";
+      } else {
+        showFinalFeedback();
       }
     });
 
